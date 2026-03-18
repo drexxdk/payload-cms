@@ -96,10 +96,15 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('en' | 'da' | 'de' | 'fr')
+    | ('en' | 'da' | 'de' | 'fr')[];
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'en' | 'da' | 'de' | 'fr';
   widgets: {
     collections: CollectionsWidget;
   };

@@ -23,6 +23,11 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  localization: {
+    locales: ['en', 'da', 'de', 'fr'],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   collections: [Users, Media, ProjectTypes, Projects, ProjectGroups, Courses, Palettes],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

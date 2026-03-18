@@ -54,16 +54,18 @@ function PaletteShadeRow({
 
   return (
     <tr className="border-t border-[var(--theme-elevation-100)] align-middle first:border-t-0">
-      <td className="px-4 py-4 text-sm font-medium text-[var(--theme-text)]">{shade}</td>
+      <td className="px-4 py-4 text-sm font-medium text-[var(--theme-text)] w-20 truncate">
+        {shade}
+      </td>
       <td className="px-4 py-4">
         <div
-          className="flex h-12 w-56 items-center rounded-xl border border-black/10 px-4 text-sm font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+          className="flex h-12 w-56 items-center rounded-xl border border-black/10 px-4 text-sm font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] overflow-hidden"
           style={previewStyle}
         >
           The quick brown fox
         </div>
       </td>
-      <td className="px-4 py-4 text-sm text-[var(--theme-text)] opacity-75">
+      <td className="px-4 py-4 text-sm text-[var(--theme-text)] opacity-75 w-40 truncate">
         {useDarkAccent ? 'Dark accent' : 'Light accent'}
       </td>
       <td className="px-4 py-4">
@@ -142,13 +144,13 @@ export default function PaletteField() {
       </div>
 
       <div className="overflow-x-auto rounded-[14px] border border-[var(--theme-elevation-150)] bg-[var(--theme-elevation-0)]">
-        <table className="min-w-full border-collapse">
+        <table className="min-w-full table-fixed border-collapse w-full">
           <thead>
             <tr className="text-left text-xs uppercase tracking-[0.16em] text-[var(--theme-text)] opacity-70">
-              <th className="px-4 py-3">Shade</th>
-              <th className="px-4 py-3">Preview</th>
-              <th className="px-4 py-3">Recommended</th>
-              <th className="px-4 py-3">Override</th>
+              <th className="px-4 py-3 w-20">Shade</th>
+              <th className="px-4 py-3 w-56">Preview</th>
+              <th className="px-4 py-3 w-40">Recommended</th>
+              <th className="px-4 py-3 w-28">Override</th>
             </tr>
           </thead>
           <tbody>

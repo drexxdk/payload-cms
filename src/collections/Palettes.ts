@@ -2,7 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const
 
-export const Palettes: CollectionConfig = {
+export const Palettes = {
+  localized: true,
   slug: 'palettes',
   admin: {
     useAsTitle: 'name',
@@ -38,6 +39,6 @@ export const Palettes: CollectionConfig = {
       },
     },
   ],
-}
+} as unknown as CollectionConfig
 
 export default Palettes
