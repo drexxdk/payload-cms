@@ -1,0 +1,26 @@
+@layer theme, base, components, utilities;
+
+/* Import Tailwind theme tokens (colors, spacing, etc.) */
+@import 'tailwindcss/theme.css' layer(theme);
+
+/* Skip Tailwind preflight here to avoid resetting Payload's admin base styles */
+/* @import 'tailwindcss/preflight.css' layer(base); */
+
+/* Import Tailwind utilities so we can use utility classes inside the admin */
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Support Payload's enforced dark mode by adding a custom variant that
+   targets the data-theme attribute Payload uses */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Do NOT override Payload's theme CSS variables here — keep admin colors intact.
+   If you want branding overrides, add them behind a feature flag or in a
+   narrowly-scoped selector to avoid globally changing admin colors. */
+
+/* Fix tables in the admin panel (prevent layout issues) */
+@layer utilities {
+  .pf-table {
+    display: block;
+    width: 100%;
+  }
+}

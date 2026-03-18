@@ -1510,11 +1510,6 @@
     "@lexical/selection" "0.41.0"
     lexical "0.41.0"
 
-"@libsql/win32-x64-msvc@0.4.7":
-  version "0.4.7"
-  resolved "https://registry.npmjs.org/@libsql/win32-x64-msvc/-/win32-x64-msvc-0.4.7.tgz"
-  integrity sha512-7pJzOWzPm6oJUxml+PCDRzYQ4A1hTMHAciTAHfFK4fkbDZX33nWPVG7Y3vqdKtslcwAzwmrNDc6sXy2nwWnbiw==
-
 "@monaco-editor/loader@^1.5.0":
   version "1.7.0"
   resolved "https://registry.npmjs.org/@monaco-editor/loader/-/loader-1.7.0.tgz"

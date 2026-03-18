@@ -11,8 +11,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="en">
-      <body>
-        <main>{children}</main>
+      <body className="antialiased bg-black text-white text-base md:text-lg leading-8">
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   )

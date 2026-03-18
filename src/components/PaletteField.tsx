@@ -28,34 +28,7 @@ const getShadeColor = (paletteName: unknown, shade: string) => {
   return typeof value === 'string' ? value : undefined
 }
 
-const getSwitchStyle = (checked: boolean): React.CSSProperties => ({
-  position: 'relative',
-  display: 'inline-flex',
-  height: 24,
-  width: 44,
-  alignItems: 'center',
-  border: 0,
-  borderRadius: 9999,
-  backgroundColor: checked ? '#2563eb' : '#d1d5db',
-  boxShadow: checked
-    ? 'inset 0 0 0 1px rgba(37, 99, 235, 0.35)'
-    : 'inset 0 0 0 1px rgba(15, 23, 42, 0.08)',
-  cursor: 'pointer',
-  transition: 'background-color 160ms ease, box-shadow 160ms ease',
-  flexShrink: 0,
-})
-
-const getSwitchThumbStyle = (checked: boolean): React.CSSProperties => ({
-  display: 'inline-block',
-  height: 20,
-  width: 20,
-  borderRadius: 9999,
-  backgroundColor: '#ffffff',
-  boxShadow: '0 1px 2px rgba(15, 23, 42, 0.22)',
-  transform: checked ? 'translateX(22px)' : 'translateX(2px)',
-  transition: 'transform 160ms ease',
-  willChange: 'transform',
-})
+// Use Tailwind utility classes on the Switch below instead of inline styles
 
 function PaletteShadeRow({ index, palette }: { index: number; palette: unknown }) {
   const shadeField = useField<string | null>({ path: `shades.${index}.shade` })
@@ -90,10 +63,17 @@ function PaletteShadeRow({ index, palette }: { index: number; palette: unknown }
           <Switch
             checked={override}
             onChange={(checked) => overrideField.setValue(checked)}
-            style={getSwitchStyle(override)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              override ? 'bg-blue-600 ring-blue-300' : 'bg-gray-300'
+            }`}
           >
             <span className="sr-only">Override accent for shade {shade}</span>
-            <span aria-hidden="true" style={getSwitchThumbStyle(override)} />
+            <span
+              aria-hidden="true"
+              className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-150 ${
+                override ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
           </Switch>
           <span className="text-sm text-[var(--theme-text)] opacity-75">
             {override ? 'Using alternate accent' : 'Using recommended accent'}

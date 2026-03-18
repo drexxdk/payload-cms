@@ -1,0 +1,17 @@
+@import '../../styles/payloadStyles.css';
+
+/* Admin-specific utility classes (use Tailwind @apply where helpful) */
+.pf-card {
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.pf-collection-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.pf-switch-thumb {
+  transform: translateX(0);
+}
