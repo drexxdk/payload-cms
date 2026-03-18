@@ -30,7 +30,15 @@ const getShadeColor = (paletteName: unknown, shade: string) => {
 
 // Use Tailwind utility classes on the Switch below instead of inline styles
 
-function PaletteShadeRow({ index, palette }: { index: number; palette: unknown }) {
+function PaletteShadeRow({
+  index,
+  palette,
+  isDark,
+}: {
+  index: number
+  palette: unknown
+  isDark: boolean
+}) {
   const shadeField = useField<string | null>({ path: `shades.${index}.shade` })
   const overrideField = useField<boolean | null>({ path: `shades.${index}.overrideUseDarkAccent` })
 
@@ -63,16 +71,34 @@ function PaletteShadeRow({ index, palette }: { index: number; palette: unknown }
           <Switch
             checked={override}
             onChange={(checked) => overrideField.setValue(checked)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              override ? 'bg-blue-600 ring-blue-300' : 'bg-gray-300'
-            }`}
+            className={`relative inline-flex h-[20px] w-[40px] shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75`}
+            style={{
+              backgroundColor: override
+                ? isDark
+                  ? '#059669'
+                  : '#10b981'
+                : isDark
+                  ? '#374151'
+                  : '#d1d5db',
+              padding: '2px',
+              boxSizing: 'border-box',
+              boxShadow: 'none',
+              border: 'none',
+              outline: 'none',
+            }}
           >
             <span className="sr-only">Override accent for shade {shade}</span>
             <span
               aria-hidden="true"
-              className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-150 ${
-                override ? 'translate-x-5' : 'translate-x-0'
-              }`}
+              className={`pointer-events-none absolute h-[16px] w-[16px] rounded-full bg-white ring-0 transition-all duration-200 ease-in-out`}
+              style={{
+                left: override ? undefined : '2px',
+                right: override ? '2px' : undefined,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                willChange: 'left, right',
+                boxShadow: 'none',
+              }}
             />
           </Switch>
           <span className="text-sm text-[var(--theme-text)] opacity-75">
@@ -86,6 +112,22 @@ function PaletteShadeRow({ index, palette }: { index: number; palette: unknown }
 
 export default function PaletteField() {
   const palette = useFormFields(([fields]) => fields?.palette?.value)
+  const [isDark, setIsDark] = React.useState(false)
+
+  React.useEffect(() => {
+    try {
+      const theme = document.documentElement.getAttribute('data-theme')
+      if (theme) {
+        setIsDark(theme === 'dark')
+        return
+      }
+      const prefersDark =
+        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      setIsDark(Boolean(prefersDark))
+    } catch (e) {
+      setIsDark(false)
+    }
+  }, [])
 
   return (
     <div className="p-2">
@@ -111,7 +153,12 @@ export default function PaletteField() {
           </thead>
           <tbody>
             {SHADES.map((_, index) => (
-              <PaletteShadeRow key={SHADES[index]} index={index} palette={palette} />
+              <PaletteShadeRow
+                key={SHADES[index]}
+                index={index}
+                palette={palette}
+                isDark={isDark}
+              />
             ))}
           </tbody>
         </table>

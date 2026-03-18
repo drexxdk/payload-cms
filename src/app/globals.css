@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Global utilities for the frontend only. Keep admin styles separate. */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
