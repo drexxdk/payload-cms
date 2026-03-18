@@ -45,6 +45,15 @@ export const Projects: CollectionConfig = {
       },
     },
     {
+      name: 'groups',
+      type: 'relationship',
+      relationTo: 'project-groups',
+      hasMany: true,
+      admin: {
+        description: 'Child project groups',
+      },
+    },
+    {
       name: 'status',
       type: 'select',
       options: ['draft', 'active', 'archived'],

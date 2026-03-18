@@ -71,6 +71,8 @@ export interface Config {
     media: Media;
     'project-types': ProjectType;
     projects: Project;
+    'project-groups': ProjectGroup;
+    courses: Course;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +84,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'project-types': ProjectTypesSelect<false> | ProjectTypesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'project-groups': ProjectGroupsSelect<false> | ProjectGroupsSelect<true>;
+    courses: CoursesSelect<false> | CoursesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -202,8 +206,44 @@ export interface Project {
    * Select the project type (uses project-types collection)
    */
   projectType: number | ProjectType;
+  /**
+   * Child project groups
+   */
+  groups?: (number | ProjectGroup)[] | null;
   status: 'draft' | 'active' | 'archived';
   isPublic?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-groups".
+ */
+export interface ProjectGroup {
+  id: number;
+  /**
+   * Parent project for this group
+   */
+  project: number | Project;
+  title: string;
+  /**
+   * Courses assigned to this group
+   */
+  courses?: (number | Course)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  /**
+   * Which project this course belongs to
+   */
+  project: number | Project;
   updatedAt: string;
   createdAt: string;
 }
@@ -246,6 +286,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'project-groups';
+        value: number | ProjectGroup;
+      } | null)
+    | ({
+        relationTo: 'courses';
+        value: number | Course;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -347,8 +395,30 @@ export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   projectType?: T;
+  groups?: T;
   status?: T;
   isPublic?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-groups_select".
+ */
+export interface ProjectGroupsSelect<T extends boolean = true> {
+  project?: T;
+  title?: T;
+  courses?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses_select".
+ */
+export interface CoursesSelect<T extends boolean = true> {
+  title?: T;
+  project?: T;
   updatedAt?: T;
   createdAt?: T;
 }
