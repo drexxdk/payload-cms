@@ -73,6 +73,7 @@ export interface Config {
     projects: Project;
     'project-groups': ProjectGroup;
     courses: Course;
+    palettes: Palette;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'project-groups': ProjectGroupsSelect<false> | ProjectGroupsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
+    palettes: PalettesSelect<false> | PalettesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -249,6 +251,24 @@ export interface Course {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "palettes".
+ */
+export interface Palette {
+  id: number;
+  name: string;
+  palette: string;
+  shades?:
+    | {
+        shade: string;
+        overrideUseDarkAccent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -294,6 +314,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'courses';
         value: number | Course;
+      } | null)
+    | ({
+        relationTo: 'palettes';
+        value: number | Palette;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -419,6 +443,23 @@ export interface ProjectGroupsSelect<T extends boolean = true> {
 export interface CoursesSelect<T extends boolean = true> {
   title?: T;
   project?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "palettes_select".
+ */
+export interface PalettesSelect<T extends boolean = true> {
+  name?: T;
+  palette?: T;
+  shades?:
+    | T
+    | {
+        shade?: T;
+        overrideUseDarkAccent?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
