@@ -41,8 +41,8 @@ export const Projects: CollectionConfig = {
       relationTo: 'project-types',
       required: true,
       admin: {
-        description: 'Select the project type (uses project-types collection)'
-      }
+        description: 'Select the project type (uses project-types collection)',
+      },
     },
     {
       name: 'status',
@@ -51,7 +51,7 @@ export const Projects: CollectionConfig = {
       defaultValue: 'draft',
       required: true,
     },
-    
+
     {
       name: 'isPublic',
       type: 'checkbox',
