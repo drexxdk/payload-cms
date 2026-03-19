@@ -89,7 +89,7 @@ async function ensureCourse(payload: Payload, projectID: number) {
   })
 }
 
-async function ensureGroup(payload: Payload, projectID: number, courseID: number) {
+async function ensureGroup(payload: Payload, projectID: number) {
   const existing = await payload.find({
     collection: 'project-groups',
     where: {
@@ -117,7 +117,6 @@ async function ensureGroup(payload: Payload, projectID: number, courseID: number
       data: {
         title: DEMO_GROUP_TITLE,
         project: projectID,
-        courses: [courseID],
       },
       depth: 0,
     })
@@ -128,7 +127,6 @@ async function ensureGroup(payload: Payload, projectID: number, courseID: number
     data: {
       title: DEMO_GROUP_TITLE,
       project: projectID,
-      courses: [courseID],
     },
     depth: 0,
   })
@@ -192,7 +190,7 @@ export async function seedProjects(payload: Payload) {
   }
 
   const course = await ensureCourse(payload, projectID)
-  const group = await ensureGroup(payload, projectID, course.id)
+  const group = await ensureGroup(payload, projectID)
 
   console.log('Ensured demo project group:', group.id)
   console.log('Ensured demo project course:', course.id)

@@ -10,6 +10,7 @@ import { Media } from './collections/Media'
 import { Projects } from './collections/Projects'
 import { ProjectTypes } from './collections/ProjectTypes'
 import { ProductTypes } from './collections/ProductTypes'
+import { Products } from './collections/Products'
 import { ProjectGroups } from './collections/ProjectGroups'
 import { Courses } from './collections/Courses'
 import { Palettes } from './collections/Palettes'
@@ -34,6 +35,7 @@ export default buildConfig({
     Media,
     ProjectTypes,
     ProductTypes,
+    Products,
     Projects,
     ProjectGroups,
     Courses,

@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     'project-types': ProjectType;
     'product-types': ProductType;
+    products: Product;
     projects: Project;
     'project-groups': ProjectGroup;
     courses: Course;
@@ -86,6 +87,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'project-types': ProjectTypesSelect<false> | ProjectTypesSelect<true>;
     'product-types': ProductTypesSelect<false> | ProductTypesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'project-groups': ProjectGroupsSelect<false> | ProjectGroupsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
@@ -202,6 +204,39 @@ export interface ProductType {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  isbn?: string | null;
+  /**
+   * Optional product type (uses product-types collection)
+   */
+  productType?: (number | null) | ProductType;
+  /**
+   * Courses associated with this product
+   */
+  courses?: (number | Course)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  /**
+   * Which project this course belongs to
+   */
+  project: number | Project;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
 export interface Project {
@@ -261,24 +296,6 @@ export interface ProjectGroup {
    */
   project: number | Project;
   title: string;
-  /**
-   * Courses assigned to this group
-   */
-  courses?: (number | Course)[] | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses".
- */
-export interface Course {
-  id: number;
-  title: string;
-  /**
-   * Which project this course belongs to
-   */
-  project: number | Project;
   updatedAt: string;
   createdAt: string;
 }
@@ -339,6 +356,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'product-types';
         value: number | ProductType;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
       } | null)
     | ({
         relationTo: 'projects';
@@ -460,6 +481,18 @@ export interface ProductTypesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  isbn?: T;
+  productType?: T;
+  courses?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects_select".
  */
 export interface ProjectsSelect<T extends boolean = true> {
@@ -485,7 +518,6 @@ export interface ProjectsSelect<T extends boolean = true> {
 export interface ProjectGroupsSelect<T extends boolean = true> {
   project?: T;
   title?: T;
-  courses?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -35,14 +35,5 @@ export const ProjectGroups: CollectionConfig = {
       localized: true,
       required: true,
     },
-    {
-      name: 'courses',
-      type: 'relationship',
-      relationTo: 'courses',
-      hasMany: true,
-      admin: {
-        description: 'Courses assigned to this group',
-      },
-    },
   ],
 }
