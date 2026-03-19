@@ -1,7 +1,10 @@
 import type { Payload } from 'payload'
 import { PALETTES, SHADES, LOCALES } from './utils'
 
-const colorTranslations: Record<string, Record<string, string>> = {
+type PaletteName = (typeof PALETTES)[number]
+type LocalizedLocale = Exclude<(typeof LOCALES)[number], 'en'>
+
+const colorTranslations: Record<LocalizedLocale, Record<PaletteName, string>> = {
   da: {
     slate: 'Skifer',
     gray: 'Grå',
@@ -82,12 +85,11 @@ export async function seedPalettes(payload: Payload) {
   for (const p of PALETTES) {
     const title = p[0].toUpperCase() + p.slice(1)
 
-    const existingEn = await (payload as any).find({
+    const existingEn = await payload.find({
       collection: 'palettes',
       where: { palette: { equals: p } },
       depth: 0,
       locale: 'en',
-      fallback: false,
     })
     const shades = SHADES.map((s) => ({ shade: s }))
 
@@ -111,7 +113,7 @@ export async function seedPalettes(payload: Payload) {
 
     for (const loc of LOCALES) {
       if (loc === 'en') continue
-      const localizedColor = (colorTranslations as any)[loc]?.[p] || title
+      const localizedColor = colorTranslations[loc][p]
       const localizedName =
         loc === 'da'
           ? `${localizedColor} palet`

@@ -2,7 +2,10 @@ import type { CollectionConfig } from 'payload'
 import type { User } from '../payload-types'
 
 function hasRoles(u: unknown): u is User & { roles?: string[] } {
-  return typeof u === 'object' && u !== null && Array.isArray((u as any).roles)
+  if (typeof u !== 'object' || u === null) return false
+
+  const candidate = u as { roles?: unknown }
+  return Array.isArray(candidate.roles)
 }
 
 export const ProjectTypes: CollectionConfig = {
