@@ -189,7 +189,6 @@ async function ensureProject(
     title: project.title,
     projectType: projectTypeID,
     lifecycle: 'active' as const,
-    _status: 'published' as const,
     isPublic: false,
     viewers: project.viewers,
     editors: project.editors,
@@ -204,6 +203,7 @@ async function ensureProject(
       id: existingDoc.id,
       data: projectData,
       depth: 0,
+      draft: false,
     })
   }
 
@@ -211,6 +211,7 @@ async function ensureProject(
     collection: 'projects',
     data: projectData,
     depth: 0,
+    draft: false,
   })
 }
 

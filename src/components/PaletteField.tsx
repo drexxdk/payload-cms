@@ -7,11 +7,6 @@ import tailwindColors from 'tailwindcss/colors'
 
 const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const
 
-type Shade = {
-  shade?: string | null
-  overrideUseDarkAccent?: boolean | null
-}
-
 type TailwindPalette = Record<string, string>
 
 const paletteMap = tailwindColors as Record<string, TailwindPalette | string>
@@ -126,7 +121,7 @@ export default function PaletteField() {
       const prefersDark =
         window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
       setIsDark(Boolean(prefersDark))
-    } catch (e) {
+    } catch (_e) {
       setIsDark(false)
     }
   }, [])
