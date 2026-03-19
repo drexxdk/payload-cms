@@ -8,10 +8,34 @@ import {
 
 export const Courses: CollectionConfig = {
   slug: 'courses',
+  labels: {
+    singular: {
+      en: 'Course',
+      da: 'Kursus',
+      de: 'Kurs',
+      fr: 'Cours',
+    },
+    plural: {
+      en: 'Courses',
+      da: 'Kurser',
+      de: 'Kurse',
+      fr: 'Cours',
+    },
+  },
   admin: {
     useAsTitle: 'title',
-    group: 'Delivery',
-    description: 'Project-scoped course records linked to the products they use.',
+    group: {
+      en: 'Delivery',
+      da: 'Levering',
+      de: 'Auslieferung',
+      fr: 'Livraison',
+    },
+    description: {
+      en: 'Project-scoped course records linked to the products they use.',
+      da: 'Projektforankrede kursusposter knyttet til de produkter, de bruger.',
+      de: 'Projektbezogene Kursdatensaetze, die mit den verwendeten Produkten verknuepft sind.',
+      fr: 'Fiches de cours rattachees aux projets et liees aux produits qu’elles utilisent.',
+    },
     defaultColumns: ['title', 'project', 'createdAt'],
   },
   access: {
@@ -24,21 +48,44 @@ export const Courses: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      label: {
+        en: 'Title',
+        da: 'Titel',
+        de: 'Titel',
+        fr: 'Titre',
+      },
       type: 'text',
       localized: true,
       required: true,
     },
     {
       name: 'project',
+      label: {
+        en: 'Project',
+        da: 'Projekt',
+        de: 'Projekt',
+        fr: 'Projet',
+      },
       type: 'relationship',
       relationTo: 'projects',
       required: true,
       admin: {
-        description: 'Which project this course belongs to',
+        description: {
+          en: 'Which project this course belongs to',
+          da: 'Hvilket projekt dette kursus tilhoerer',
+          de: 'Zu welchem Projekt dieser Kurs gehoert',
+          fr: 'Projet auquel appartient ce cours',
+        },
       },
     },
     {
       name: 'products',
+      label: {
+        en: 'Products',
+        da: 'Produkter',
+        de: 'Produkte',
+        fr: 'Produits',
+      },
       type: 'join',
       collection: 'products',
       on: 'courses',

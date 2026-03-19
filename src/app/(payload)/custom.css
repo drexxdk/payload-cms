@@ -1,13 +1,16 @@
 @import '../../styles/payloadStyles.css';
 
+/* Let wide admin tables scroll horizontally instead of overflowing their card/container. */
 .table-wrap {
     overflow: auto;
 }
 
+/* Allow meta controls to wrap on smaller widths so custom actions do not collide. */
 .doc-controls__meta {
     flex-wrap: wrap;
 }
 
+/* Keep Payload tables anchored to the container edges after our admin surface tweaks. */
 .table {
     left: 0;
     padding-left: 0;
@@ -15,14 +18,17 @@
     margin-bottom: 0;
 }
 
+/* Reserve vertical rhythm around the custom stable Lexical description shell. */
 .stable-description-field {
     margin-bottom: var(--base);
 }
 
+/* Hide the real field container until it has meaningful content to avoid blank space. */
 .stable-description-field__field:empty {
     display: none;
 }
 
+/* Mimic Payload input chrome while the Lexical field is stabilizing on first render. */
 .stable-description-field__shimmer {
     height: calc(var(--base) * 2.6 + 14px) !important;
     border: 1px solid var(--theme-elevation-150);
@@ -31,47 +37,56 @@
     box-shadow: 0 2px 2px -1px #0000001a;
 }
 
+/* Do not show the field host once Payload is still rendering its own shimmer placeholder. */
 .stable-description-field__field:has(.shimmer-effect) {
     display: none;
 }
 
+/* Swap from the temporary shell to the live Lexical field as soon as the editor mounts. */
 .stable-description-field:has(.stable-description-field__field .rich-text-lexical) > .stable-description-field__shell {
     display: none;
 }
 
+/* Restore input-like chrome around Lexical so it feels consistent with Payload form fields. */
 .rich-text-lexical__wrap {
     box-shadow: 0 2px 2px -1px #0000001a;
     border: 1px solid var(--theme-elevation-150);
     border-radius: var(--style-radius-s);
-    /* background: var(--theme-input-bg); */
+    /* Leaving the background untouched preserves the editor's own theme-aware fill. */
     transition-property: border-color, box-shadow, background-color;
     transition-duration: 0.1s, 0.1s, 0.5s;
     transition-timing-function: cubic-bezier(0, 0.2, 0.2, 1);
 }
 
+/* Match Payload input hover treatment so the custom Lexical shell does not feel foreign. */
 .rich-text-lexical__wrap:hover {
     box-shadow: 0 2px 2px -1px #0003;
     border-color: var(--theme-elevation-250);
 }
 
+/* Mirror Payload focus styling when the editor receives keyboard focus. */
 .rich-text-lexical:focus-within .rich-text-lexical__wrap {
     border-color: var(--theme-elevation-400);
 }
 
+/* Guarantee a usable tap/click area even before the editor contains real content. */
 .rich-text-lexical .editor-container,
 .rich-text-lexical .ContentEditable__root {
     min-height: calc(var(--base) * 2.6);
 }
 
+/* Align empty-editor text vertically with the rest of Payload's text inputs. */
 .rich-text-lexical .ContentEditable__root {
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
+/* Keep the Lexical placeholder aligned with the adjusted content padding above. */
 .rich-text-lexical .LexicalEditorTheme__placeholder {
     top: 10px;
 }
 
+/* Hide Lexical block controls for the single-empty-paragraph state to keep the field calm. */
 .rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .add-block-menu,
 .rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .draggable-block-menu,
 .rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .insert-paragraph-at-end {
@@ -79,22 +94,13 @@
 }
 
 @media (max-width: 1440px) {
-    body:has(.nav:not(.nav--nav-hydrated)) .nav:not(.nav--nav-hydrated) {
-        display: none !important;
-        width: 0 !important;
-        min-width: 0 !important;
-        border: 0 !important;
-    }
-
+    /* Hide the nav toggle until Payload finishes nav hydration so it does not flash open-state UI. */
     body:has(.nav:not(.nav--nav-hydrated)) .template-default__nav-toggler-wrapper {
         visibility: hidden;
         width: 0 !important;
     }
 
-    body:has(.nav:not(.nav--nav-hydrated)) .template-default__wrap {
-        min-width: 100%;
-    }
-
+    /* Disable the closed-nav grid animation to prevent a short content shift on tablet widths. */
     .template-default.template-default--nav-hydrated:not(.template-default--nav-open) {
         grid-template-columns: 0 auto !important;
         transition: none !important;

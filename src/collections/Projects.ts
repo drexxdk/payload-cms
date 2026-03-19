@@ -1,3 +1,4 @@
+import { getTranslation } from '@payloadcms/translations'
 import type { CollectionConfig, PayloadRequest } from 'payload'
 import {
   buildProjectEditAccess,
@@ -25,7 +26,16 @@ function summarizeUsers(value: unknown): string {
 }
 
 async function summarizeUsersForAdmin(req: PayloadRequest, value: unknown) {
-  if (!Array.isArray(value) || value.length === 0) return 'None'
+  const translate = (label: Parameters<typeof getTranslation>[0]) => getTranslation(label, req.i18n)
+
+  if (!Array.isArray(value) || value.length === 0) {
+    return translate({
+      en: 'None',
+      da: 'Ingen',
+      de: 'Keine',
+      fr: 'Aucun',
+    }) as string
+  }
   if (!isSuperAdmin(req.user)) return summarizeUsers(value)
 
   const ids = value
@@ -63,10 +73,34 @@ async function summarizeUsersForAdmin(req: PayloadRequest, value: unknown) {
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
+  labels: {
+    singular: {
+      en: 'Project',
+      da: 'Projekt',
+      de: 'Projekt',
+      fr: 'Projet',
+    },
+    plural: {
+      en: 'Projects',
+      da: 'Projekter',
+      de: 'Projekte',
+      fr: 'Projets',
+    },
+  },
   admin: {
     useAsTitle: 'title',
-    group: 'Delivery',
-    description: 'Top-level workspaces that contain groups, courses, and access memberships.',
+    group: {
+      en: 'Delivery',
+      da: 'Levering',
+      de: 'Auslieferung',
+      fr: 'Livraison',
+    },
+    description: {
+      en: 'Top-level workspaces that contain groups, courses, and access memberships.',
+      da: 'Arbejdsomraader paa oeverste niveau, som indeholder grupper, kurser og adgangsmedlemskaber.',
+      de: 'Arbeitsbereiche auf oberster Ebene, die Gruppen, Kurse und Zugriffsmitgliedschaften enthalten.',
+      fr: 'Espaces de travail de premier niveau contenant groupes, cours et appartenances d’acces.',
+    },
     defaultColumns: [
       'title',
       '_status',
@@ -90,35 +124,75 @@ export const Projects: CollectionConfig = {
   fields: [
     {
       name: 'title',
+      label: {
+        en: 'Title',
+        da: 'Titel',
+        de: 'Titel',
+        fr: 'Titre',
+      },
       type: 'text',
       localized: true,
       required: true,
     },
     {
       name: 'description',
+      label: {
+        en: 'Description',
+        da: 'Beskrivelse',
+        de: 'Beschreibung',
+        fr: 'Description',
+      },
       type: 'richText',
     },
     {
       name: 'projectType',
+      label: {
+        en: 'Project Type',
+        da: 'Projekttype',
+        de: 'Projekttyp',
+        fr: 'Type de projet',
+      },
       type: 'relationship',
       relationTo: 'project-types',
       required: true,
       admin: {
-        description: 'Select the project type (uses project-types collection)',
+        description: {
+          en: 'Select the project type (uses project-types collection)',
+          da: 'Vaelg projekttypen (bruger samlingen project-types)',
+          de: 'Waehle den Projekttyp aus (verwendet die Sammlung project-types)',
+          fr: 'Selectionnez le type de projet (utilise la collection project-types)',
+        },
       },
     },
     {
       name: 'groups',
+      label: {
+        en: 'Groups',
+        da: 'Grupper',
+        de: 'Gruppen',
+        fr: 'Groupes',
+      },
       type: 'join',
       collection: 'project-groups',
       on: 'project',
       admin: {
-        description: 'Child project groups',
+        description: {
+          en: 'Child project groups',
+          da: 'Underordnede projektgrupper',
+          de: 'Untergeordnete Projektgruppen',
+          fr: 'Groupes de projet enfants',
+        },
         defaultColumns: ['title', 'createdAt'],
       },
     },
     {
       name: 'courses',
+      label: {
+        en: 'Courses',
+        da: 'Kurser',
+        de: 'Kurse',
+        fr: 'Cours',
+      },
       type: 'join',
       collection: 'courses',
       on: 'project',
@@ -128,11 +202,22 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'viewers',
+      label: {
+        en: 'Viewers',
+        da: 'Seere',
+        de: 'Leser',
+        fr: 'Lecteurs',
+      },
       type: 'relationship',
       relationTo: 'users',
       hasMany: true,
       admin: {
-        description: 'Users who can view this project.',
+        description: {
+          en: 'Users who can view this project.',
+          da: 'Brugere som kan se dette projekt.',
+          de: 'Benutzer, die dieses Projekt ansehen koennen.',
+          fr: 'Utilisateurs pouvant consulter ce projet.',
+        },
       },
       access: {
         create: ({ req: { user } }) => isSuperAdmin(user),
@@ -141,11 +226,22 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'editors',
+      label: {
+        en: 'Editors',
+        da: 'Redaktoerer',
+        de: 'Bearbeiter',
+        fr: 'Editeurs',
+      },
       type: 'relationship',
       relationTo: 'users',
       hasMany: true,
       admin: {
-        description: 'Users who can edit this project and its child content.',
+        description: {
+          en: 'Users who can edit this project and its child content.',
+          da: 'Brugere som kan redigere dette projekt og dets underindhold.',
+          de: 'Benutzer, die dieses Projekt und dessen untergeordnete Inhalte bearbeiten koennen.',
+          fr: 'Utilisateurs pouvant modifier ce projet et ses contenus enfants.',
+        },
       },
       access: {
         create: ({ req: { user } }) => isSuperAdmin(user),
@@ -154,11 +250,22 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'managers',
+      label: {
+        en: 'Managers',
+        da: 'Ledere',
+        de: 'Manager',
+        fr: 'Responsables',
+      },
       type: 'relationship',
       relationTo: 'users',
       hasMany: true,
       admin: {
-        description: 'Users who can manage project memberships.',
+        description: {
+          en: 'Users who can manage project memberships.',
+          da: 'Brugere som kan administrere projektmedlemskaber.',
+          de: 'Benutzer, die Projektmitgliedschaften verwalten koennen.',
+          fr: 'Utilisateurs pouvant gerer les appartenances au projet.',
+        },
       },
       access: {
         create: ({ req: { user } }) => isSuperAdmin(user),
@@ -167,6 +274,12 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'viewerSummary',
+      label: {
+        en: 'Viewer Summary',
+        da: 'Opsummering af seere',
+        de: 'Zusammenfassung Leser',
+        fr: 'Resume des lecteurs',
+      },
       type: 'text',
       virtual: true,
       admin: {
@@ -181,6 +294,12 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'editorSummary',
+      label: {
+        en: 'Editor Summary',
+        da: 'Opsummering af redaktoerer',
+        de: 'Zusammenfassung Bearbeiter',
+        fr: 'Resume des editeurs',
+      },
       type: 'text',
       virtual: true,
       admin: {
@@ -195,6 +314,12 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'managerSummary',
+      label: {
+        en: 'Manager Summary',
+        da: 'Opsummering af ledere',
+        de: 'Zusammenfassung Manager',
+        fr: 'Resume des responsables',
+      },
       type: 'text',
       virtual: true,
       admin: {
@@ -254,6 +379,12 @@ export const Projects: CollectionConfig = {
 
     {
       name: 'isPublic',
+      label: {
+        en: 'Public',
+        da: 'Offentlig',
+        de: 'Oeffentlich',
+        fr: 'Public',
+      },
       type: 'checkbox',
       defaultValue: false,
     },

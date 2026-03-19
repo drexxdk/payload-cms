@@ -9,6 +9,9 @@ export default function AdminNavBootstrap({ children }: { children?: React.React
   const { setNavOpen } = useNav()
 
   useLayoutEffect(() => {
+    // Payload can briefly reuse the server-side open nav state on narrower widths
+    // before breakpoint hydration settles. Closing it in a layout effect prevents
+    // the visible sidebar flash without forcing the shell layout through CSS.
     if (window.matchMedia(desktopNavBreakpoint).matches) {
       setNavOpen(false)
     }

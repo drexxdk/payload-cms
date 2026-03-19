@@ -2,8 +2,24 @@ import type { CollectionConfig, PayloadRequest } from 'payload'
 import { isSuperAdmin } from '../access/rbac'
 
 const ROLE_OPTIONS = [
-  { label: 'Super Admin', value: 'super-admin' },
-  { label: 'User', value: 'user' },
+  {
+    label: {
+      en: 'Super Admin',
+      da: 'Superadministrator',
+      de: 'Superadmin',
+      fr: 'Super administrateur',
+    },
+    value: 'super-admin',
+  },
+  {
+    label: {
+      en: 'User',
+      da: 'Bruger',
+      de: 'Benutzer',
+      fr: 'Utilisateur',
+    },
+    value: 'user',
+  },
 ]
 
 const canManageRoles = async ({ req }: { req: PayloadRequest }) => {
@@ -13,12 +29,41 @@ const canManageRoles = async ({ req }: { req: PayloadRequest }) => {
   return isSuperAdmin(req.user)
 }
 
+const showProjectMembershipField = (
+  data: Partial<{ id?: number | string }>,
+  user: PayloadRequest['user'],
+) => isSuperAdmin(user) && data?.id !== user?.id
+
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    singular: {
+      en: 'User',
+      da: 'Bruger',
+      de: 'Benutzer',
+      fr: 'Utilisateur',
+    },
+    plural: {
+      en: 'Users',
+      da: 'Brugere',
+      de: 'Benutzer',
+      fr: 'Utilisateurs',
+    },
+  },
   admin: {
     useAsTitle: 'email',
-    group: 'Access & People',
-    description: 'Authenticated users with global roles and project-scoped memberships.',
+    group: {
+      en: 'Access & People',
+      da: 'Adgang og personer',
+      de: 'Zugriff und Personen',
+      fr: 'Acces et personnes',
+    },
+    description: {
+      en: 'Authenticated users with global roles and project-scoped memberships.',
+      da: 'Autentificerede brugere med globale roller og projektafgrænsede medlemskaber.',
+      de: 'Authentifizierte Benutzer mit globalen Rollen und projektspezifischen Mitgliedschaften.',
+      fr: 'Utilisateurs authentifies avec des roles globaux et des appartenances liees aux projets.',
+    },
     defaultColumns: ['email', 'roles', 'viewableProjects', 'editableProjects', 'managedProjects'],
   },
   auth: true,
@@ -47,6 +92,12 @@ export const Users: CollectionConfig = {
   fields: [
     {
       name: 'roles',
+      label: {
+        en: 'Roles',
+        da: 'Roller',
+        de: 'Rollen',
+        fr: 'Roles',
+      },
       type: 'select',
       hasMany: true,
       options: ROLE_OPTIONS,
@@ -63,6 +114,12 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'viewableProjects',
+      label: {
+        en: 'Viewable Projects',
+        da: 'Synlige projekter',
+        de: 'Sichtbare Projekte',
+        fr: 'Projets consultables',
+      },
       type: 'join',
       collection: 'projects',
       on: 'viewers',
@@ -70,11 +127,21 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
+        components: {
+          Field: '/components/admin/UserProjectAssociationsField',
+        },
+        condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },
     {
       name: 'editableProjects',
+      label: {
+        en: 'Editable Projects',
+        da: 'Redigerbare projekter',
+        de: 'Bearbeitbare Projekte',
+        fr: 'Projets modifiables',
+      },
       type: 'join',
       collection: 'projects',
       on: 'editors',
@@ -82,11 +149,21 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
+        components: {
+          Field: '/components/admin/UserProjectAssociationsField',
+        },
+        condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },
     {
       name: 'managedProjects',
+      label: {
+        en: 'Managed Projects',
+        da: 'Administrerede projekter',
+        de: 'Verwaltete Projekte',
+        fr: 'Projets geres',
+      },
       type: 'join',
       collection: 'projects',
       on: 'managers',
@@ -94,6 +171,10 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
+        components: {
+          Field: '/components/admin/UserProjectAssociationsField',
+        },
+        condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },

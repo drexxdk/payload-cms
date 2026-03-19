@@ -1,6 +1,13 @@
 import type { Payload } from 'payload'
 import { DEMO_PASSWORD, DEMO_PROJECT, DEMO_USERS } from './demo'
 
+type SeedProjectDefinition = {
+  title: string
+  viewers?: number[]
+  editors?: number[]
+  managers?: number[]
+}
+
 async function ensureUser(payload: Payload, email: string) {
   const existing = await payload.find({
     collection: 'users',
@@ -162,6 +169,51 @@ async function ensureGroup(payload: Payload, projectID: number) {
   })
 }
 
+async function ensureProject(
+  payload: Payload,
+  projectTypeID: number,
+  project: SeedProjectDefinition,
+) {
+  const existingProject = await payload.find({
+    collection: 'projects',
+    where: {
+      title: {
+        equals: project.title,
+      },
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  const projectData = {
+    title: project.title,
+    projectType: projectTypeID,
+    lifecycle: 'active' as const,
+    _status: 'published' as const,
+    isPublic: false,
+    viewers: project.viewers,
+    editors: project.editors,
+    managers: project.managers,
+  }
+
+  const existingDoc = existingProject.docs[0]
+
+  if (existingDoc) {
+    return payload.update({
+      collection: 'projects',
+      id: existingDoc.id,
+      data: projectData,
+      depth: 0,
+    })
+  }
+
+  return payload.create({
+    collection: 'projects',
+    data: projectData,
+    depth: 0,
+  })
+}
+
 export async function seedProjects(payload: Payload) {
   const projectType = await ensureProjectType(payload)
 
@@ -175,51 +227,41 @@ export async function seedProjects(payload: Payload) {
   const editor = await ensureUser(payload, DEMO_USERS.editor)
   const manager = await ensureUser(payload, DEMO_USERS.manager)
 
-  const existingProject = await payload.find({
-    collection: 'projects',
-    where: {
-      title: {
-        equals: DEMO_PROJECT.title,
-      },
+  const projectDefinitions: SeedProjectDefinition[] = [
+    {
+      title: DEMO_PROJECT.title,
+      viewers: [viewer.id],
+      editors: [editor.id],
+      managers: [manager.id],
     },
-    depth: 0,
-    limit: 1,
-  })
+    ...Array.from({ length: 13 }, (_, index) => ({
+      title: `RBAC Manager Portfolio ${String(index + 1).padStart(2, '0')}`,
+      viewers: index < 2 ? [manager.id] : undefined,
+      editors: index < 3 ? [manager.id, editor.id] : undefined,
+      managers: [manager.id],
+    })),
+    ...Array.from({ length: 4 }, (_, index) => ({
+      title: `RBAC Viewer Shelf ${String(index + 1).padStart(2, '0')}`,
+      viewers: [viewer.id, editor.id],
+      editors: index < 2 ? [editor.id] : undefined,
+      managers: undefined,
+    })),
+  ]
 
-  const projectData = {
-    title: DEMO_PROJECT.title,
-    projectType: projectType.id,
-    lifecycle: 'active' as const,
-    _status: 'published' as const,
-    isPublic: false,
-    viewers: [viewer.id],
-    editors: [editor.id],
-    managers: [manager.id],
+  let projectID: number | undefined
+
+  for (const projectDefinition of projectDefinitions) {
+    const projectDoc = await ensureProject(payload, projectType.id, projectDefinition)
+
+    if (projectDefinition.title === DEMO_PROJECT.title) {
+      projectID = projectDoc.id
+    }
+
+    console.log('Ensured seeded project memberships:', projectDoc.title, projectDoc.id)
   }
 
-  const existingDoc = existingProject.docs[0]
-
-  let projectID: number
-
-  if (existingDoc) {
-    const updated = await payload.update({
-      collection: 'projects',
-      id: existingDoc.id,
-      data: projectData,
-      depth: 0,
-    })
-
-    console.log('Updated demo project memberships:', updated.id)
-    projectID = updated.id
-  } else {
-    const created = await payload.create({
-      collection: 'projects',
-      data: projectData,
-      depth: 0,
-    })
-
-    console.log('Created demo project memberships:', created.id)
-    projectID = created.id
+  if (!projectID) {
+    throw new Error('Failed to ensure the base demo project')
   }
 
   const course = await ensureCourse(payload, projectID)
