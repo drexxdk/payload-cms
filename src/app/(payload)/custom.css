@@ -1,6 +1,16 @@
 @import '../../styles/payloadStyles.css';
 
-/* fix bug in payload table width */
-.collection-list .table {
-    width: calc(100% + var(--gutter-h) * 1);
+.table-wrap {
+    overflow: auto;
+}
+
+.doc-controls__meta {
+    flex-wrap: wrap;
+}
+
+.table {
+    left: 0;
+    padding-left: 0;
+    width: 100%;
+    margin-bottom: 0;
 }
