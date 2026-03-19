@@ -73,7 +73,7 @@ export const ProjectTypes: CollectionConfig = {
       collection: 'projects',
       on: 'projectType',
       admin: {
-        defaultColumns: ['title', 'status', 'createdAt'],
+        defaultColumns: ['title', '_status', 'createdAt'],
       },
     },
   ],

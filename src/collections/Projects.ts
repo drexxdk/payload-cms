@@ -371,10 +371,6 @@ export const Projects: CollectionConfig = {
           fr: 'Cycle de vie metier distinct du statut de brouillon et de publication de Payload.',
         },
       },
-      hooks: {
-        afterRead: [({ value }) => (value === 'draft' ? 'active' : value)],
-        beforeValidate: [({ value }) => (value === 'draft' ? 'active' : value)],
-      },
     },
 
     {

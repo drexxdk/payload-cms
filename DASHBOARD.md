@@ -13,7 +13,7 @@ The current direction is:
 
 ## Current Status
 
-Status: active foundation in place
+Status: active foundation in place, with broader admin UX polish now completed
 
 Implemented:
 
@@ -26,6 +26,14 @@ Implemented:
 - dashboard data is fetched server-side with Payload Local API counts
 - access-aware queries use `req` with `overrideAccess: false`
 - dark theme styling has been corrected for the Quick actions area
+- custom dashboard text is localized through Payload admin i18n
+- collection groups, labels, field labels, descriptions, and option labels are localized for `en`, `da`, `de`, and `fr`
+- Projects now use Payload native drafts / publish status alongside the separate business `lifecycle` field
+- admin nav/sidebar flicker was fixed with a provider-based bootstrap approach
+- Users documents now show read-only project association overviews instead of the default join-management UI
+- association overview cards now show project title, publish status, lifecycle, and pagination without create/manage actions
+- self-account and self-user views no longer expose the confusing association management surface
+- seed data now includes enough associated projects to test pagination and mixed user-role associations
 
 Recently fixed:
 
@@ -34,6 +42,10 @@ Recently fixed:
 - project membership gap signals were added for viewers, editors, and managers
 - quick actions now include review flows for missing access coverage and orphaned products
 - relation health cards deep-link into filtered admin lists where Payload supports those filters safely
+- dashboard and broader admin UI now follow the same language model as native Payload admin screens
+- `/admin/account` no longer renders project association management sections
+- Users edit screens now render a clearer read-only association overview instead of the default join widget
+- local seed fixtures were expanded and the database was reset / reseeded to support overview and pagination testing
 
 Known state of the implementation:
 
@@ -41,6 +53,7 @@ Known state of the implementation:
 - it is currently focused on counts and structural relationships, not workflow analytics
 - most relation health links open filtered admin lists directly
 - project list deep links for `groups` and `courses` remain unfiltered because Payload's admin filter UI crashes on those join-field filters in this project
+- the surrounding admin UX is now significantly more coherent than before, especially for localization and user/project relationship visibility
 
 ## Current Implementation
 
@@ -90,6 +103,8 @@ Status labels:
 ### Next
 
 - [ ] Review dashboard spacing and readability at smaller admin viewport widths if the layout changes further.
+- [ ] Add draft / published insight where it gives clear editorial value on the dashboard.
+- [ ] Add a recent updates section across key collections.
 
 ### Done Recently
 
@@ -97,6 +112,12 @@ Status labels:
 - [x] Add workflow-oriented quick actions based on actual repeated admin tasks.
 - [x] Show whether projects are missing managers, editors, or viewers.
 - [x] Review current narrow-width dashboard layout for overflow or stacking issues.
+- [x] Localize the custom dashboard and wider custom admin surface to match Payload admin i18n.
+- [x] Replace confusing user project join widgets with a read-only overview that lists associated projects clearly.
+- [x] Add pagination test data by expanding seed fixtures for project memberships.
+- [x] Reset and reseed the local database to validate the updated admin UX against fresh data.
+- [x] Keep the signed-in super-admin self-view behavior as-is: hidden on `/admin/account` and not expanded into a special self-management surface.
+- [x] Simplify the Users list to identity and role columns only.
 
 ### Later
 
@@ -109,20 +130,22 @@ Status labels:
 - [ ] Confirm hover and focus states are equally clear in both light and dark themes.
 - [ ] Review whether any custom dashboard sections should be replaced with more Payload-native admin components.
 - [ ] Add code comments only where the dashboard logic would otherwise be hard to follow.
+- [ ] Consider showing a small amount of extra project metadata in the user association overview, such as project type, if it improves scanning without turning the view back into a management surface.
 
 ### Watch
 
 - [ ] Highlight empty or orphaned media records if that becomes a real issue in day-to-day use.
 - [ ] Evaluate whether grouped quick actions would reduce scanning time once there are more dashboard actions.
+- [ ] Revisit Payload join-field customizations if a future Payload update offers a cleaner native read-only association presentation.
 
 ## Suggested Working Order
 
 If dashboard work continues, the recommended implementation order is:
 
-1. Relation health links to filtered views.
-2. Operational insight items such as drafts and recent updates.
-3. Role and permission distribution visibility.
-4. Additional narrow-width polish if future dashboard sections become denser.
+1. Add operational insight items such as drafts and recent updates.
+2. Add role and permission distribution visibility.
+3. Continue narrow-width polish only as new admin sections become denser.
+4. Revisit optional overview metadata only if editors need more context on user relationship cards.
 
 ## Validation Notes
 
@@ -131,6 +154,8 @@ Dashboard changes should continue to be validated with:
 - `yarn tsc --noEmit`
 - browser verification in both light and dark theme
 - manual check that Local API dashboard queries continue to use `req` and `overrideAccess: false`
+- browser verification of admin language switching for at least one non-English language
+- seed data review when testing pagination or relationship overview changes
 
 ## Related Files
 

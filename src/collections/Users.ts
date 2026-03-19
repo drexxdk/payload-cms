@@ -64,7 +64,7 @@ export const Users: CollectionConfig = {
       de: 'Authentifizierte Benutzer mit globalen Rollen und projektspezifischen Mitgliedschaften.',
       fr: 'Utilisateurs authentifies avec des roles globaux et des appartenances liees aux projets.',
     },
-    defaultColumns: ['email', 'roles', 'viewableProjects', 'editableProjects', 'managedProjects'],
+    defaultColumns: ['email', 'roles'],
   },
   auth: true,
   hooks: {
@@ -132,6 +132,7 @@ export const Users: CollectionConfig = {
         },
         condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
+        disableListColumn: true,
       },
     },
     {
@@ -154,6 +155,7 @@ export const Users: CollectionConfig = {
         },
         condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
+        disableListColumn: true,
       },
     },
     {
@@ -176,6 +178,7 @@ export const Users: CollectionConfig = {
         },
         condition: (data, _, { user }) => showProjectMembershipField(data, user),
         defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
+        disableListColumn: true,
       },
     },
   ],

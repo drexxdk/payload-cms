@@ -24,6 +24,23 @@ type QuickAction = {
   label: ReactNode
 }
 
+type EditorialItem = {
+  description: ReactNode
+  href: string
+  key: string
+  label: ReactNode
+  total: number
+}
+
+type RecentUpdateItem = {
+  collectionLabel: ReactNode
+  href: string
+  key: string
+  meta: ReactNode
+  title: ReactNode
+  updatedAt: number
+}
+
 type RelationItem = {
   detail: ReactNode
   key: string
@@ -70,6 +87,30 @@ const dashboardCopy = {
     de: 'Schnellaktionen',
     en: 'Quick actions',
     fr: 'Actions rapides',
+  },
+  editorialInsightsDescription: {
+    da: 'Et hurtigt redaktionelt overblik over hvad der er publiceret, hvad der stadig er kladde, og hvad der er blevet opdateret for nylig.',
+    de: 'Ein schneller redaktioneller Ueberblick darueber, was veroeffentlicht ist, was noch Entwurf ist und was kuerzlich aktualisiert wurde.',
+    en: 'A fast editorial view of what is published, what is still draft, and what changed recently.',
+    fr: 'Une vue editoriale rapide de ce qui est publie, de ce qui est encore en brouillon et de ce qui a change recemment.',
+  },
+  editorialInsightsTitle: {
+    da: 'Redaktionelle signaler',
+    de: 'Redaktionelle Signale',
+    en: 'Editorial signals',
+    fr: 'Signaux editoriaux',
+  },
+  recentUpdatesDescription: {
+    da: 'De seneste aendringer paa tvaers af de vigtigste samlinger til dagligt redaktionelt arbejde.',
+    de: 'Die neuesten Aenderungen ueber die wichtigsten Sammlungen fuer die taegliche Redaktion hinweg.',
+    en: 'The latest changes across the collections that matter most in day-to-day editorial work.',
+    fr: 'Les dernieres modifications dans les collections les plus utiles au travail editorial quotidien.',
+  },
+  recentUpdatesTitle: {
+    da: 'Seneste opdateringer',
+    de: 'Letzte Aktualisierungen',
+    en: 'Recent updates',
+    fr: 'Mises a jour recentes',
   },
   relationHealthDescription: {
     da: 'Disse antal fremhaever manglende koblinger og ufuldstaendige strukturer, der boer have opmaerksomhed.',
@@ -129,6 +170,21 @@ async function countDocuments(
   })
 
   return result.totalDocs
+}
+
+async function findRecentDocuments(
+  props: AdminViewServerProps,
+  collection: Extract<DashboardCollection, 'courses' | 'media' | 'products' | 'projects'>,
+  limit = 4,
+) {
+  return props.initPageResult.req.payload.find({
+    collection,
+    depth: 0,
+    limit,
+    overrideAccess: false,
+    req: props.initPageResult.req,
+    sort: '-updatedAt',
+  })
 }
 
 function dashboardLink(path: string) {
@@ -317,6 +373,25 @@ function HealthCard({ description, href, label, total }: HealthItem) {
   )
 }
 
+function EditorialCard({ description, href, label, total }: EditorialItem) {
+  return (
+    <a
+      className="rounded-3xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) p-5 transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)"
+      href={href}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-sm font-semibold text-(--theme-text)">{label}</div>
+          <p className="mt-2 text-sm leading-6 text-(--theme-text) opacity-72">{description}</p>
+        </div>
+        <div className="rounded-full border border-(--theme-elevation-200) bg-(--theme-elevation-50) px-3 py-1 text-sm font-semibold text-(--theme-text)">
+          {total}
+        </div>
+      </div>
+    </a>
+  )
+}
+
 function QuickActionCard({ description, href, label }: QuickAction) {
   return (
     <a
@@ -338,6 +413,85 @@ function RelationLine({ detail, title }: { detail: ReactNode; title: ReactNode }
   )
 }
 
+function RecentUpdateRow({
+  collectionLabel,
+  href,
+  meta,
+  title,
+}: Omit<RecentUpdateItem, 'key' | 'updatedAt'>) {
+  return (
+    <a
+      className="rounded-2xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) p-4 transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)"
+      href={href}
+    >
+      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-(--theme-success-500)">
+        {collectionLabel}
+      </div>
+      <div className="mt-2 text-sm font-semibold text-(--theme-text)">{title}</div>
+      <div className="mt-1 text-sm text-(--theme-text) opacity-72">{meta}</div>
+    </a>
+  )
+}
+
+function formatUpdatedAt(
+  i18n: AdminViewServerProps['initPageResult']['req']['i18n'],
+  value: unknown,
+) {
+  if (typeof value !== 'string' || value.length === 0) return ''
+
+  return new Intl.DateTimeFormat(i18n.language, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value))
+}
+
+function formatRecentUpdateMeta(
+  i18n: AdminViewServerProps['initPageResult']['req']['i18n'],
+  item: Record<string, unknown>,
+) {
+  const parts: string[] = []
+  const status = item._status
+  const lifecycle = item.lifecycle
+
+  if (status === 'draft') {
+    parts.push(
+      String(translate(i18n, { da: 'Kladde', de: 'Entwurf', en: 'Draft', fr: 'Brouillon' })),
+    )
+  } else if (status === 'published') {
+    parts.push(
+      String(
+        translate(i18n, { da: 'Publiceret', de: 'Veroeffentlicht', en: 'Published', fr: 'Publie' }),
+      ),
+    )
+  }
+
+  if (lifecycle === 'active') {
+    parts.push(String(translate(i18n, { da: 'Aktiv', de: 'Aktiv', en: 'Active', fr: 'Actif' })))
+  } else if (lifecycle === 'archived') {
+    parts.push(
+      String(translate(i18n, { da: 'Arkiveret', de: 'Archiviert', en: 'Archived', fr: 'Archive' })),
+    )
+  }
+
+  const updatedAt = formatUpdatedAt(i18n, item.updatedAt)
+  if (updatedAt) {
+    parts.push(
+      `${String(translate(i18n, { da: 'Opdateret', de: 'Aktualisiert', en: 'Updated', fr: 'Mis a jour' }))} ${updatedAt}`,
+    )
+  }
+
+  return parts.join(' · ')
+}
+
+function asRecord(value: unknown) {
+  return value as Record<string, unknown>
+}
+
+function getStringField(item: Record<string, unknown>, key: string) {
+  const value = item[key]
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
 export default async function AdminDashboard(props: AdminViewServerProps) {
   const i18n = props.initPageResult.req.i18n
   const [
@@ -347,6 +501,10 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
     products,
     users,
     media,
+    draftProjects,
+    publishedProjects,
+    activeProjects,
+    archivedProjects,
     projectsWithoutGroups,
     projectsWithoutCourses,
     emptyProjectGroups,
@@ -356,6 +514,10 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
     projectsWithoutEditors,
     projectsWithoutManagers,
     usersWithoutMemberships,
+    recentProjects,
+    recentProducts,
+    recentCourses,
+    recentMedia,
   ] = await Promise.all([
     countDocuments(props, 'projects'),
     countDocuments(props, 'project-groups'),
@@ -363,6 +525,10 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
     countDocuments(props, 'products'),
     countDocuments(props, 'users'),
     countDocuments(props, 'media'),
+    countDocuments(props, 'projects', { _status: { equals: 'draft' } }),
+    countDocuments(props, 'projects', { _status: { equals: 'published' } }),
+    countDocuments(props, 'projects', { lifecycle: { equals: 'active' } }),
+    countDocuments(props, 'projects', { lifecycle: { equals: 'archived' } }),
     countDocuments(props, 'projects', { groups: { exists: false } }),
     countDocuments(props, 'projects', { courses: { exists: false } }),
     countDocuments(props, 'project-groups', { products: { exists: false } }),
@@ -378,6 +544,10 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
         { managedProjects: { exists: false } },
       ],
     }),
+    findRecentDocuments(props, 'projects'),
+    findRecentDocuments(props, 'products'),
+    findRecentDocuments(props, 'courses'),
+    findRecentDocuments(props, 'media'),
   ])
 
   const metricTotals: Record<DashboardCollection, number> = {
@@ -559,6 +729,168 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
     },
   ]
 
+  const editorialItems: EditorialItem[] = [
+    {
+      description: translate(i18n, {
+        da: 'Projekter som stadig venter paa publicering.',
+        de: 'Projekte, die noch auf die Veroeffentlichung warten.',
+        en: 'Projects that still need to be published.',
+        fr: 'Projets qui attendent encore d etre publies.',
+      }),
+      href: collectionListLink('projects', { _status: { equals: 'draft' } }),
+      key: 'draft-projects',
+      label: translate(i18n, {
+        da: 'Projektkladder',
+        de: 'Projektentwuerfe',
+        en: 'Draft projects',
+        fr: 'Projets en brouillon',
+      }),
+      total: draftProjects,
+    },
+    {
+      description: translate(i18n, {
+        da: 'Projekter som allerede er synlige som publiceret indhold.',
+        de: 'Projekte, die bereits als veroeffentlichte Inhalte sichtbar sind.',
+        en: 'Projects already visible as published content.',
+        fr: 'Projets deja visibles comme contenu publie.',
+      }),
+      href: collectionListLink('projects', { _status: { equals: 'published' } }),
+      key: 'published-projects',
+      label: translate(i18n, {
+        da: 'Publicerede projekter',
+        de: 'Veroeffentlichte Projekte',
+        en: 'Published projects',
+        fr: 'Projets publies',
+      }),
+      total: publishedProjects,
+    },
+    {
+      description: translate(i18n, {
+        da: 'Aktive projekter som stadig hoerer til den nuvaerende portefolje.',
+        de: 'Aktive Projekte, die noch zum aktuellen Portfolio gehoeren.',
+        en: 'Active projects that still belong to the current portfolio.',
+        fr: 'Projets actifs qui font encore partie du portefeuille courant.',
+      }),
+      href: collectionListLink('projects', { lifecycle: { equals: 'active' } }),
+      key: 'active-projects',
+      label: translate(i18n, {
+        da: 'Aktive projekter',
+        de: 'Aktive Projekte',
+        en: 'Active projects',
+        fr: 'Projets actifs',
+      }),
+      total: activeProjects,
+    },
+    {
+      description: translate(i18n, {
+        da: 'Arkiverede projekter som stadig findes i systemet men ikke laengere er aktive.',
+        de: 'Archivierte Projekte, die noch im System vorhanden sind, aber nicht mehr aktiv sind.',
+        en: 'Archived projects that still exist in the system but are no longer active.',
+        fr: 'Projets archives qui existent encore dans le systeme mais ne sont plus actifs.',
+      }),
+      href: collectionListLink('projects', { lifecycle: { equals: 'archived' } }),
+      key: 'archived-projects',
+      label: translate(i18n, {
+        da: 'Arkiverede projekter',
+        de: 'Archivierte Projekte',
+        en: 'Archived projects',
+        fr: 'Projets archives',
+      }),
+      total: archivedProjects,
+    },
+  ]
+
+  const recentUpdates: RecentUpdateItem[] = [
+    ...recentProjects.docs.map((doc) => {
+      const item = asRecord(doc)
+
+      return {
+        collectionLabel: translate(i18n, {
+          da: 'Projekter',
+          de: 'Projekte',
+          en: 'Projects',
+          fr: 'Projets',
+        }),
+        href: `/admin/collections/projects/${doc.id}`,
+        key: `projects-${String(doc.id)}`,
+        meta: formatRecentUpdateMeta(i18n, item),
+        title:
+          getStringField(item, 'title') ??
+          translate(i18n, {
+            da: 'Projekt uden titel',
+            de: 'Projekt ohne Titel',
+            en: 'Untitled project',
+            fr: 'Projet sans titre',
+          }),
+        updatedAt: new Date(String(item.updatedAt ?? 0)).getTime(),
+      }
+    }),
+    ...recentProducts.docs.map((doc) => {
+      const item = asRecord(doc)
+
+      return {
+        collectionLabel: translate(i18n, {
+          da: 'Produkter',
+          de: 'Produkte',
+          en: 'Products',
+          fr: 'Produits',
+        }),
+        href: `/admin/collections/products/${doc.id}`,
+        key: `products-${String(doc.id)}`,
+        meta: formatRecentUpdateMeta(i18n, item),
+        title:
+          getStringField(item, 'title') ??
+          translate(i18n, {
+            da: 'Produkt uden titel',
+            de: 'Produkt ohne Titel',
+            en: 'Untitled product',
+            fr: 'Produit sans titre',
+          }),
+        updatedAt: new Date(String(item.updatedAt ?? 0)).getTime(),
+      }
+    }),
+    ...recentCourses.docs.map((doc) => {
+      const item = asRecord(doc)
+
+      return {
+        collectionLabel: translate(i18n, { da: 'Kurser', de: 'Kurse', en: 'Courses', fr: 'Cours' }),
+        href: `/admin/collections/courses/${doc.id}`,
+        key: `courses-${String(doc.id)}`,
+        meta: formatRecentUpdateMeta(i18n, item),
+        title:
+          getStringField(item, 'title') ??
+          translate(i18n, {
+            da: 'Kursus uden titel',
+            de: 'Kurs ohne Titel',
+            en: 'Untitled course',
+            fr: 'Cours sans titre',
+          }),
+        updatedAt: new Date(String(item.updatedAt ?? 0)).getTime(),
+      }
+    }),
+    ...recentMedia.docs.map((doc) => {
+      const item = asRecord(doc)
+
+      return {
+        collectionLabel: translate(i18n, { da: 'Medier', de: 'Medien', en: 'Media', fr: 'Medias' }),
+        href: `/admin/collections/media/${doc.id}`,
+        key: `media-${String(doc.id)}`,
+        meta: formatRecentUpdateMeta(i18n, item),
+        title:
+          getStringField(item, 'filename') ??
+          translate(i18n, {
+            da: 'Medie uden navn',
+            de: 'Medium ohne Namen',
+            en: 'Unnamed media',
+            fr: 'Media sans nom',
+          }),
+        updatedAt: new Date(String(item.updatedAt ?? 0)).getTime(),
+      }
+    }),
+  ]
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .slice(0, 8)
+
   const quickActions: QuickAction[] = [
     {
       label: translate(i18n, {
@@ -729,6 +1061,44 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
               <QuickActionCard key={action.href} {...action} />
             ))}
           </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-(--theme-text)">
+            {translate(i18n, dashboardCopy.editorialInsightsTitle)}
+          </h2>
+          <p className="mt-1 text-sm text-(--theme-text) opacity-72">
+            {translate(i18n, dashboardCopy.editorialInsightsDescription)}
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {editorialItems.map(({ key, ...item }) => (
+            <EditorialCard key={key} {...item} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-(--theme-text)">
+            {translate(i18n, dashboardCopy.recentUpdatesTitle)}
+          </h2>
+          <p className="mt-1 text-sm text-(--theme-text) opacity-72">
+            {translate(i18n, dashboardCopy.recentUpdatesDescription)}
+          </p>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {recentUpdates.map((item) => (
+            <RecentUpdateRow
+              key={item.key}
+              collectionLabel={item.collectionLabel}
+              href={item.href}
+              meta={item.meta}
+              title={item.title}
+            />
+          ))}
         </div>
       </section>
 
