@@ -3,7 +3,6 @@ import type { CollectionConfig } from 'payload'
 const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const
 
 export const Palettes = {
-  localized: true,
   slug: 'palettes',
   admin: {
     useAsTitle: 'name',
@@ -16,12 +15,14 @@ export const Palettes = {
     delete: () => true,
   },
   fields: [
-    { name: 'name', type: 'text', required: true },
+    { name: 'name', type: 'text', required: true, localized: true },
     {
       name: 'palette',
       type: 'text',
       required: true,
       admin: { readOnly: true },
+      unique: true,
+      index: true,
     },
     {
       name: 'shades',
