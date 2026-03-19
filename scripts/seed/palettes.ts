@@ -1,83 +1,10 @@
 import type { Payload } from 'payload'
-import { PALETTES, SHADES, LOCALES } from './utils'
+import { COLOR_TRANSLATIONS, LOCALES, PALETTES, SHADES } from './palette-data'
 
 type PaletteName = (typeof PALETTES)[number]
 type LocalizedLocale = Exclude<(typeof LOCALES)[number], 'en'>
 
-const colorTranslations: Record<LocalizedLocale, Record<PaletteName, string>> = {
-  da: {
-    slate: 'Skifer',
-    gray: 'Grå',
-    zinc: 'Zink',
-    neutral: 'Neutral',
-    stone: 'Sten',
-    red: 'Rød',
-    orange: 'Orange',
-    amber: 'Rav',
-    yellow: 'Gul',
-    lime: 'Lime',
-    green: 'Grøn',
-    emerald: 'Smaragd',
-    teal: 'Blågrøn',
-    cyan: 'Cyan',
-    sky: 'Himmelblå',
-    blue: 'Blå',
-    indigo: 'Indigo',
-    violet: 'Violet',
-    purple: 'Lilla',
-    fuchsia: 'Fuchsia',
-    pink: 'Lyserød',
-    rose: 'Rose',
-  },
-  de: {
-    slate: 'Schiefer',
-    gray: 'Grau',
-    zinc: 'Zink',
-    neutral: 'Neutral',
-    stone: 'Stein',
-    red: 'Rot',
-    orange: 'Orange',
-    amber: 'Bernstein',
-    yellow: 'Gelb',
-    lime: 'Limette',
-    green: 'Grün',
-    emerald: 'Smaragd',
-    teal: 'Blaugrün',
-    cyan: 'Cyan',
-    sky: 'Himmelblau',
-    blue: 'Blau',
-    indigo: 'Indigo',
-    violet: 'Violett',
-    purple: 'Lila',
-    fuchsia: 'Fuchsia',
-    pink: 'Rosa',
-    rose: 'Rose',
-  },
-  fr: {
-    slate: 'Ardoise',
-    gray: 'Gris',
-    zinc: 'Zinc',
-    neutral: 'Neutre',
-    stone: 'Pierre',
-    red: 'Rouge',
-    orange: 'Orange',
-    amber: 'Ambre',
-    yellow: 'Jaune',
-    lime: 'Citron vert',
-    green: 'Vert',
-    emerald: 'Émeraude',
-    teal: 'Sarcelle',
-    cyan: 'Cyan',
-    sky: 'Bleu ciel',
-    blue: 'Bleu',
-    indigo: 'Indigo',
-    violet: 'Violet',
-    purple: 'Pourpre',
-    fuchsia: 'Fuchsia',
-    pink: 'Rose',
-    rose: 'Rose',
-  },
-}
+const colorTranslations: Record<LocalizedLocale, Record<PaletteName, string>> = COLOR_TRANSLATIONS
 
 export async function seedPalettes(payload: Payload) {
   // Payload localizes fields, so each palette stays as one document and localized

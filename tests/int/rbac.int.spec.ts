@@ -10,9 +10,9 @@ type DemoUserKey = 'viewer' | 'editor' | 'manager'
 
 const DEMO_PROJECT_TITLE = 'RBAC Demo Project'
 const DEMO_EMAILS: Record<DemoUserKey, string> = {
-  viewer: 'project-viewer@payloadcms.local',
-  editor: 'project-editor@payloadcms.local',
-  manager: 'project-manager@payloadcms.local',
+  viewer: 'viewer@mail.com',
+  editor: 'editor@mail.com',
+  manager: 'manager@mail.com',
 }
 
 let payload: Payload

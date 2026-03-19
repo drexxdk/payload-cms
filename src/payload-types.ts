@@ -81,7 +81,29 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    users: {
+      viewableProjects: 'projects';
+      editableProjects: 'projects';
+      managedProjects: 'projects';
+    };
+    'project-types': {
+      projects: 'projects';
+    };
+    'product-types': {
+      products: 'products';
+    };
+    products: {
+      projectGroups: 'project-groups';
+    };
+    projects: {
+      groups: 'project-groups';
+      courses: 'courses';
+    };
+    courses: {
+      products: 'products';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -143,6 +165,21 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   roles?: ('super-admin' | 'user')[] | null;
+  viewableProjects?: {
+    docs?: (number | Project)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  editableProjects?: {
+    docs?: (number | Project)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  managedProjects?: {
+    docs?: (number | Project)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -161,79 +198,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "project-types".
- */
-export interface ProjectType {
-  id: number;
-  title: string;
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "product-types".
- */
-export interface ProductType {
-  id: number;
-  title: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: number;
-  title: string;
-  isbn?: string | null;
-  /**
-   * Optional product type (uses product-types collection)
-   */
-  productType?: (number | null) | ProductType;
-  /**
-   * Courses associated with this product
-   */
-  courses?: (number | Course)[] | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses".
- */
-export interface Course {
-  id: number;
-  title: string;
-  /**
-   * Which project this course belongs to
-   */
-  project: number | Project;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -264,7 +228,16 @@ export interface Project {
   /**
    * Child project groups
    */
-  groups?: (number | ProjectGroup)[] | null;
+  groups?: {
+    docs?: (number | ProjectGroup)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  courses?: {
+    docs?: (number | Course)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   /**
    * Users who can view this project.
    */
@@ -287,6 +260,22 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-types".
+ */
+export interface ProjectType {
+  id: number;
+  title: string;
+  description?: string | null;
+  projects?: {
+    docs?: (number | Project)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "project-groups".
  */
 export interface ProjectGroup {
@@ -295,9 +284,90 @@ export interface ProjectGroup {
    * Parent project for this group
    */
   project: number | Project;
+  /**
+   * Products contained in this project group
+   */
+  products?: (number | Product)[] | null;
   title: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  isbn?: string | null;
+  /**
+   * Optional product type (uses product-types collection)
+   */
+  productType?: (number | null) | ProductType;
+  /**
+   * Courses associated with this product
+   */
+  courses?: (number | Course)[] | null;
+  projectGroups?: {
+    docs?: (number | ProjectGroup)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-types".
+ */
+export interface ProductType {
+  id: number;
+  title: string;
+  products?: {
+    docs?: (number | Product)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  /**
+   * Which project this course belongs to
+   */
+  project: number | Project;
+  products?: {
+    docs?: (number | Product)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -425,6 +495,9 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   roles?: T;
+  viewableProjects?: T;
+  editableProjects?: T;
+  managedProjects?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -467,6 +540,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface ProjectTypesSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  projects?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -476,6 +550,7 @@ export interface ProjectTypesSelect<T extends boolean = true> {
  */
 export interface ProductTypesSelect<T extends boolean = true> {
   title?: T;
+  products?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -488,6 +563,7 @@ export interface ProductsSelect<T extends boolean = true> {
   isbn?: T;
   productType?: T;
   courses?: T;
+  projectGroups?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -500,6 +576,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   description?: T;
   projectType?: T;
   groups?: T;
+  courses?: T;
   viewers?: T;
   editors?: T;
   managers?: T;
@@ -517,6 +594,7 @@ export interface ProjectsSelect<T extends boolean = true> {
  */
 export interface ProjectGroupsSelect<T extends boolean = true> {
   project?: T;
+  products?: T;
   title?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -528,6 +606,7 @@ export interface ProjectGroupsSelect<T extends boolean = true> {
 export interface CoursesSelect<T extends boolean = true> {
   title?: T;
   project?: T;
+  products?: T;
   updatedAt?: T;
   createdAt?: T;
 }

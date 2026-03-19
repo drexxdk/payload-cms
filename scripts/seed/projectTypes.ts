@@ -1,11 +1,5 @@
 import type { Payload } from 'payload'
-
-const PROJECT_TYPES = [
-  { title: 'Alinea Portal' },
-  { title: 'Villeby' },
-  { title: 'HDBHDW' },
-  { title: 'Koncentrat' },
-]
+import { PROJECT_TYPES } from './type-data'
 
 export async function seedProjectTypes(payload: Payload) {
   for (const projectType of PROJECT_TYPES) {

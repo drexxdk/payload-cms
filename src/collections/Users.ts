@@ -58,5 +58,41 @@ export const Users: CollectionConfig = {
         update: canManageRoles,
       },
     },
+    {
+      name: 'viewableProjects',
+      type: 'join',
+      collection: 'projects',
+      on: 'viewers',
+      access: {
+        read: ({ req }) => isSuperAdmin(req.user),
+      },
+      admin: {
+        defaultColumns: ['title', 'status', 'createdAt'],
+      },
+    },
+    {
+      name: 'editableProjects',
+      type: 'join',
+      collection: 'projects',
+      on: 'editors',
+      access: {
+        read: ({ req }) => isSuperAdmin(req.user),
+      },
+      admin: {
+        defaultColumns: ['title', 'status', 'createdAt'],
+      },
+    },
+    {
+      name: 'managedProjects',
+      type: 'join',
+      collection: 'projects',
+      on: 'managers',
+      access: {
+        read: ({ req }) => isSuperAdmin(req.user),
+      },
+      admin: {
+        defaultColumns: ['title', 'status', 'createdAt'],
+      },
+    },
   ],
 }

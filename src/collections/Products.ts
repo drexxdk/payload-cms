@@ -43,6 +43,15 @@ export const Products: CollectionConfig = {
         description: 'Courses associated with this product',
       },
     },
+    {
+      name: 'projectGroups',
+      type: 'join',
+      collection: 'project-groups',
+      on: 'products',
+      admin: {
+        defaultColumns: ['title', 'project', 'createdAt'],
+      },
+    },
   ],
 }
 

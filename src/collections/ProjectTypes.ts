@@ -23,5 +23,14 @@ export const ProjectTypes: CollectionConfig = {
       name: 'description',
       type: 'textarea',
     },
+    {
+      name: 'projects',
+      type: 'join',
+      collection: 'projects',
+      on: 'projectType',
+      admin: {
+        defaultColumns: ['title', 'status', 'createdAt'],
+      },
+    },
   ],
 }

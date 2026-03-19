@@ -20,6 +20,15 @@ export const ProductTypes: CollectionConfig = {
       localized: true,
       required: true,
     },
+    {
+      name: 'products',
+      type: 'join',
+      collection: 'products',
+      on: 'productType',
+      admin: {
+        defaultColumns: ['title', 'isbn'],
+      },
+    },
   ],
 }
 

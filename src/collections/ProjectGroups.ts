@@ -10,7 +10,7 @@ export const ProjectGroups: CollectionConfig = {
   slug: 'project-groups',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'createdAt'],
+    defaultColumns: ['title', 'project', 'createdAt'],
   },
   access: {
     read: ({ req: { user } }) => buildProjectReadAccess(user, 'project.'),
@@ -27,6 +27,15 @@ export const ProjectGroups: CollectionConfig = {
       required: true,
       admin: {
         description: 'Parent project for this group',
+      },
+    },
+    {
+      name: 'products',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      admin: {
+        description: 'Products contained in this project group',
       },
     },
     {

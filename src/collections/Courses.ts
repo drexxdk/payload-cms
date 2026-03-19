@@ -35,5 +35,14 @@ export const Courses: CollectionConfig = {
         description: 'Which project this course belongs to',
       },
     },
+    {
+      name: 'products',
+      type: 'join',
+      collection: 'products',
+      on: 'courses',
+      admin: {
+        defaultColumns: ['title', 'isbn', 'productType'],
+      },
+    },
   ],
 }

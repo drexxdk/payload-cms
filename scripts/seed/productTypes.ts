@@ -1,10 +1,5 @@
 import type { Payload } from 'payload'
-
-const PRODUCT_TYPES = [
-  { title: 'Preschool' },
-  { title: 'Middle school' },
-  { title: 'Upper-level school' },
-]
+import { PRODUCT_TYPES } from './type-data'
 
 export async function seedProductTypes(payload: Payload) {
   for (const t of PRODUCT_TYPES) {

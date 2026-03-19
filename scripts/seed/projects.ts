@@ -1,16 +1,5 @@
 import type { Payload } from 'payload'
-
-const DEMO_PASSWORD = 'test'
-const DEMO_PROJECT_TITLE = 'RBAC Demo Project'
-const DEMO_PROJECT_TYPE = 'Alinea Portal'
-const DEMO_GROUP_TITLE = 'RBAC Demo Group'
-const DEMO_COURSE_TITLE = 'RBAC Demo Course'
-
-const DEMO_USERS = {
-  viewer: 'project-viewer@payloadcms.local',
-  editor: 'project-editor@payloadcms.local',
-  manager: 'project-manager@payloadcms.local',
-} as const
+import { DEMO_PASSWORD, DEMO_PROJECT, DEMO_USERS } from './demo'
 
 async function ensureUser(payload: Payload, email: string) {
   const existing = await payload.find({
@@ -25,7 +14,14 @@ async function ensureUser(payload: Payload, email: string) {
   })
 
   if (existing.docs.length > 0) {
-    return existing.docs[0]
+    return payload.update({
+      collection: 'users',
+      id: existing.docs[0].id,
+      data: {
+        roles: ['user'],
+      },
+      depth: 0,
+    })
   }
 
   return payload.create({
@@ -39,12 +35,46 @@ async function ensureUser(payload: Payload, email: string) {
   })
 }
 
+async function ensureBootstrapAdmin(payload: Payload) {
+  const existing = await payload.find({
+    collection: 'users',
+    where: {
+      email: {
+        equals: DEMO_USERS.admin,
+      },
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  if (existing.docs.length > 0) {
+    return payload.update({
+      collection: 'users',
+      id: existing.docs[0].id,
+      data: {
+        roles: ['super-admin'],
+      },
+      depth: 0,
+    })
+  }
+
+  return payload.create({
+    collection: 'users',
+    data: {
+      email: DEMO_USERS.admin,
+      password: DEMO_PASSWORD,
+      roles: ['super-admin'],
+    },
+    depth: 0,
+  })
+}
+
 async function ensureProjectType(payload: Payload) {
   const existing = await payload.find({
     collection: 'project-types',
     where: {
       title: {
-        equals: DEMO_PROJECT_TYPE,
+        equals: DEMO_PROJECT.projectType,
       },
     },
     depth: 0,
@@ -61,7 +91,7 @@ async function ensureCourse(payload: Payload, projectID: number) {
       and: [
         {
           title: {
-            equals: DEMO_COURSE_TITLE,
+            equals: DEMO_PROJECT.courseTitle,
           },
         },
         {
@@ -82,7 +112,7 @@ async function ensureCourse(payload: Payload, projectID: number) {
   return payload.create({
     collection: 'courses',
     data: {
-      title: DEMO_COURSE_TITLE,
+      title: DEMO_PROJECT.courseTitle,
       project: projectID,
     },
     depth: 0,
@@ -96,7 +126,7 @@ async function ensureGroup(payload: Payload, projectID: number) {
       and: [
         {
           title: {
-            equals: DEMO_GROUP_TITLE,
+            equals: DEMO_PROJECT.groupTitle,
           },
         },
         {
@@ -115,7 +145,7 @@ async function ensureGroup(payload: Payload, projectID: number) {
       collection: 'project-groups',
       id: existing.docs[0].id,
       data: {
-        title: DEMO_GROUP_TITLE,
+        title: DEMO_PROJECT.groupTitle,
         project: projectID,
       },
       depth: 0,
@@ -125,7 +155,7 @@ async function ensureGroup(payload: Payload, projectID: number) {
   return payload.create({
     collection: 'project-groups',
     data: {
-      title: DEMO_GROUP_TITLE,
+      title: DEMO_PROJECT.groupTitle,
       project: projectID,
     },
     depth: 0,
@@ -136,8 +166,10 @@ export async function seedProjects(payload: Payload) {
   const projectType = await ensureProjectType(payload)
 
   if (!projectType) {
-    throw new Error(`Missing required project type: ${DEMO_PROJECT_TYPE}`)
+    throw new Error(`Missing required project type: ${DEMO_PROJECT.projectType}`)
   }
+
+  await ensureBootstrapAdmin(payload)
 
   const viewer = await ensureUser(payload, DEMO_USERS.viewer)
   const editor = await ensureUser(payload, DEMO_USERS.editor)
@@ -147,7 +179,7 @@ export async function seedProjects(payload: Payload) {
     collection: 'projects',
     where: {
       title: {
-        equals: DEMO_PROJECT_TITLE,
+        equals: DEMO_PROJECT.title,
       },
     },
     depth: 0,
@@ -155,7 +187,7 @@ export async function seedProjects(payload: Payload) {
   })
 
   const projectData = {
-    title: DEMO_PROJECT_TITLE,
+    title: DEMO_PROJECT.title,
     projectType: projectType.id,
     status: 'active' as const,
     isPublic: false,

@@ -3,7 +3,7 @@ import { execSync } from 'child_process'
 function run(cmd: string) {
   console.log('> ' + cmd)
   try {
-    execSync(cmd, { stdio: 'inherit', shell: true })
+    execSync(cmd, { stdio: 'inherit', shell: process.env.ComSpec ?? 'cmd.exe' })
   } catch (err) {
     console.error('Command failed:', err instanceof Error ? err.message : String(err))
     process.exitCode = 1

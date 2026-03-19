@@ -1,28 +1,11 @@
 import type { Payload } from 'payload'
 import type { Product } from '../../src/payload-types'
-
-const PRODUCTS = [
-  {
-    title: 'Intro to Shapes',
-    isbn: '978-0-123456-47-2',
-    productType: 'Preschool',
-    courses: ['RBAC Demo Course'],
-  },
-  {
-    title: 'Advanced Topics',
-    isbn: '978-1-234567-89-7',
-    productType: 'Upper-level school',
-    courses: [],
-  },
-  {
-    title: 'Middle School Companion',
-    isbn: '',
-    productType: 'Middle school',
-    courses: ['RBAC Demo Course'],
-  },
-]
+import { DEMO_PROJECT } from './demo'
+import { PRODUCTS } from './product-data'
 
 export async function seedProducts(payload: Payload) {
+  const demoProductIDs: number[] = []
+
   for (const p of PRODUCTS) {
     const existing = await ensureProduct(payload, p.title)
 
@@ -50,22 +33,56 @@ export async function seedProducts(payload: Payload) {
       if (c.docs[0]) courseIDs.push(c.docs[0].id)
     }
 
-    type ProductCreateData = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>
+    type ProductWriteData = Pick<Product, 'title' | 'isbn' | 'productType' | 'courses'>
 
-    const data: ProductCreateData = {
+    const data: ProductWriteData = {
       title: p.title,
       isbn: p.isbn || undefined,
-      productType: (productTypeId as number) || undefined,
+      productType: productTypeId,
       courses: courseIDs.length ? courseIDs : undefined,
     }
 
+    let productID: number
+
     if (!existing) {
-      await (payload as any).create({ collection: 'products', data })
+      const created = await payload.create({ collection: 'products', data })
+      productID = created.id
       console.log('Created product:', p.title)
     } else {
-      await (payload as any).update({ collection: 'products', id: existing.id, data })
+      const updated = await payload.update({
+        collection: 'products',
+        id: existing.id,
+        data,
+      })
+      productID = updated.id
       console.log('Updated product:', p.title)
     }
+
+    if (courseIDs.length > 0) {
+      demoProductIDs.push(productID)
+    }
+  }
+
+  const demoGroup = await payload.find({
+    collection: 'project-groups',
+    where: {
+      title: {
+        equals: DEMO_PROJECT.groupTitle,
+      },
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  if (demoGroup.docs[0]) {
+    await payload.update({
+      collection: 'project-groups',
+      id: demoGroup.docs[0].id,
+      data: {
+        products: demoProductIDs,
+      },
+      depth: 0,
+    })
   }
 }
 

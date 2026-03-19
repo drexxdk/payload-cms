@@ -103,11 +103,21 @@ export const Projects: CollectionConfig = {
     },
     {
       name: 'groups',
-      type: 'relationship',
-      relationTo: 'project-groups',
-      hasMany: true,
+      type: 'join',
+      collection: 'project-groups',
+      on: 'project',
       admin: {
         description: 'Child project groups',
+        defaultColumns: ['title', 'createdAt'],
+      },
+    },
+    {
+      name: 'courses',
+      type: 'join',
+      collection: 'courses',
+      on: 'project',
+      admin: {
+        defaultColumns: ['title', 'createdAt'],
       },
     },
     {

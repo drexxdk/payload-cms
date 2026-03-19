@@ -104,11 +104,13 @@ The seed ensures a demo project and demo memberships exist:
 - Group: `RBAC Demo Group`
 - Course: `RBAC Demo Course`
 
-The seed also ensures these test users exist with password `test`:
+The seed also ensures these users exist:
 
-- `project-viewer@payloadcms.local`
-- `project-editor@payloadcms.local`
-- `project-manager@payloadcms.local`
+- Super admin: `admin@mail.com` / `test`
+- Viewer: `viewer@mail.com` / `test`
+- Editor: `editor@mail.com` / `test`
+- Manager: `manager@mail.com` / `test`
+
 
 Those users are attached to `RBAC Demo Project` as viewer, editor, and manager respectively.
 
