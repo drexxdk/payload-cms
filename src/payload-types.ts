@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     'project-types': ProjectType;
+    'product-types': ProductType;
     projects: Project;
     'project-groups': ProjectGroup;
     courses: Course;
@@ -84,6 +85,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'project-types': ProjectTypesSelect<false> | ProjectTypesSelect<true>;
+    'product-types': ProductTypesSelect<false> | ProductTypesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'project-groups': ProjectGroupsSelect<false> | ProjectGroupsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
@@ -185,6 +187,16 @@ export interface ProjectType {
   id: number;
   title: string;
   description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-types".
+ */
+export interface ProductType {
+  id: number;
+  title: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -325,6 +337,10 @@ export interface PayloadLockedDocument {
         value: number | ProjectType;
       } | null)
     | ({
+        relationTo: 'product-types';
+        value: number | ProductType;
+      } | null)
+    | ({
         relationTo: 'projects';
         value: number | Project;
       } | null)
@@ -430,6 +446,15 @@ export interface MediaSelect<T extends boolean = true> {
 export interface ProjectTypesSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-types_select".
+ */
+export interface ProductTypesSelect<T extends boolean = true> {
+  title?: T;
   updatedAt?: T;
   createdAt?: T;
 }

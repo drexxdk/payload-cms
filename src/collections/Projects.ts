@@ -85,6 +85,7 @@ export const Projects: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       required: true,
     },
     {

@@ -23,6 +23,7 @@ export const Courses: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       required: true,
     },
     {

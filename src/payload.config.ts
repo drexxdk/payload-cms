@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Projects } from './collections/Projects'
 import { ProjectTypes } from './collections/ProjectTypes'
+import { ProductTypes } from './collections/ProductTypes'
 import { ProjectGroups } from './collections/ProjectGroups'
 import { Courses } from './collections/Courses'
 import { Palettes } from './collections/Palettes'
@@ -28,7 +29,16 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
-  collections: [Users, Media, ProjectTypes, Projects, ProjectGroups, Courses, Palettes],
+  collections: [
+    Users,
+    Media,
+    ProjectTypes,
+    ProductTypes,
+    Projects,
+    ProjectGroups,
+    Courses,
+    Palettes,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
