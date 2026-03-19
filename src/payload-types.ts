@@ -138,7 +138,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  roles: ('admin' | 'editor' | 'user')[];
+  roles: ('super-admin' | 'user')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -218,6 +218,21 @@ export interface Project {
    * Child project groups
    */
   groups?: (number | ProjectGroup)[] | null;
+  /**
+   * Users who can view this project.
+   */
+  viewers?: (number | User)[] | null;
+  /**
+   * Users who can edit this project and its child content.
+   */
+  editors?: (number | User)[] | null;
+  /**
+   * Users who can manage project memberships.
+   */
+  managers?: (number | User)[] | null;
+  viewerSummary?: string | null;
+  editorSummary?: string | null;
+  managerSummary?: string | null;
   status: 'draft' | 'active' | 'archived';
   isPublic?: boolean | null;
   updatedAt: string;
@@ -427,6 +442,12 @@ export interface ProjectsSelect<T extends boolean = true> {
   description?: T;
   projectType?: T;
   groups?: T;
+  viewers?: T;
+  editors?: T;
+  managers?: T;
+  viewerSummary?: T;
+  editorSummary?: T;
+  managerSummary?: T;
   status?: T;
   isPublic?: T;
   updatedAt?: T;

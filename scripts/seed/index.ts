@@ -1,5 +1,6 @@
 import { getPayloadInstance } from './utils'
 import { seedPalettes } from './palettes'
+import { seedProjects } from './projects'
 import { seedProjectTypes } from './projectTypes'
 
 async function main() {
@@ -7,6 +8,9 @@ async function main() {
 
   console.log('Seeding project types...')
   await seedProjectTypes(payload)
+
+  console.log('Seeding projects and memberships...')
+  await seedProjects(payload)
 
   console.log('Seeding palettes...')
   await seedPalettes(payload)

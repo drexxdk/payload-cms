@@ -1,11 +1,22 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
+import { isSuperAdmin } from '../access/rbac'
 
-const ROLE_OPTIONS = ['admin', 'editor', 'user']
-const canManageRoles = ({
-  req: { user },
-}: {
-  req: { user?: { roles?: string[] | null } | null }
-}) => Array.isArray(user?.roles) && user.roles.includes('admin')
+const ROLE_OPTIONS = [
+  { label: 'Super Admin', value: 'super-admin' },
+  { label: 'User', value: 'user' },
+]
+
+const canManageRoles = async ({ req }: { req: PayloadRequest }) => {
+  if (isSuperAdmin(req.user)) return true
+
+  const existingUsers = await req.payload.find({
+    collection: 'users',
+    depth: 0,
+    limit: 1,
+  })
+
+  return existingUsers.totalDocs === 0
+}
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -13,6 +24,28 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: true,
+  hooks: {
+    beforeChange: [
+      async ({ data, operation, req }) => {
+        if (operation !== 'create') return data
+
+        const existingUsers = await req.payload.find({
+          collection: 'users',
+          depth: 0,
+          limit: 1,
+        })
+
+        if (existingUsers.totalDocs === 0) {
+          return {
+            ...data,
+            roles: ['super-admin'],
+          }
+        }
+
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'roles',
