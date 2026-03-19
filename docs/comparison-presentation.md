@@ -5,13 +5,13 @@
 
 ---
 
-## Slide 1 — Summary
+## Summary
 
 - Short conclusion: `payload-cms` (this repo) is a modern, extensible, well-tested, localized, and maintainable CMS stack that can accelerate editorial workflows. `Alinea.Products.Next.UI` is a mature, server-rendered ASP.NET MVC application (verified) with strengths in stable server-side rendering and an established data layer. This deck highlights differences respectfully to support a careful, collaborative migration conversation.
 
 ---
 
-## Slide 2 — Tech stack comparison
+## Tech stack comparison
 
 - payload-cms (this repo)
   - Next.js 15 + React 19, TypeScript-first, Payload CMS 3.79.1 (`package.json`)
@@ -28,7 +28,7 @@ Key strengths: payload-cms — modern web stack, standardized tooling, typed bui
 
 ---
 
-## Slide 3 — Localization & Internationalization
+## Localization & Internationalization
 
 - payload-cms:
   - Admin i18n configured in `src/payload.config.ts` with multiple locales
@@ -41,7 +41,7 @@ Key strengths: payload-cms — built-in content + UI localization features; Alin
 
 ---
 
-## Slide 4 — Data model, integrity, and access control
+## Data model, integrity, and access control
 
 - payload-cms:
   - Type-safe `payload-types.ts`, collections, relationships, and field-level access control
@@ -54,7 +54,7 @@ Key strengths: payload-cms — code-first collections and typed APIs simplify co
 
 ---
 
-## Slide 5 — Security & Best Practices
+## Security & Best Practices
 
 - payload-cms:
   - Follows Payload RBAC and Local API patterns, well-documented access control helpers
@@ -66,7 +66,7 @@ Key strengths: Both platforms include established security stacks; payload provi
 
 ---
 
-## Slide 6 — Developer experience & maintainability
+## Developer experience & maintainability
 
 - payload-cms:
   - TypeScript, ESLint, Prettier, tests (Vitest + Playwright), seed scripts, import map for admin components
@@ -78,7 +78,7 @@ Key strengths: payload-cms offers a modern JS developer experience; Alinea is ma
 
 ---
 
-## Slide 7 — Extensibility & Admin UX
+## Extensibility & Admin UX
 
 - payload-cms:
   - Admin import map, custom admin components (`src/components/admin/*`), plugin ecosystem
@@ -89,7 +89,7 @@ Key strengths: payload-cms — faster client-driven admin extensibility; Alinea 
 
 ---
 
-## Slide 8 — Testing & Quality Assurance
+## Testing & Quality Assurance
 
 - payload-cms:
   - Unit & integration tests, E2E tests, linting and TypeScript checks
@@ -100,7 +100,7 @@ Key strengths: payload-cms — built-in JS test tooling; Alinea has CI and build
 
 ---
 
-## Slide 9 — Migration & Data portability
+## Migration & Data portability
 
 - payload-cms:
   - Programmatic Local API for migrations and seed scripts
@@ -111,7 +111,7 @@ Key strengths: payload-cms — easier to model and migrate content programmatica
 
 ---
 
-## Slide 10 — Operational concerns
+## Operational concerns
 
 - payload-cms:
   Which next step would you like?
@@ -126,14 +126,14 @@ Advantage: payload-cms — easier to keep updated and secure.
 
 ---
 
-## Slide 11 — Risks and Caveats
+## Risks and Caveats
 
 - This comparison used the description you provided for Alinea.Products.Next.UI because I could not open `C:\Users\draxx\Sources\next\Alinea.Products.Next.UI` from this workspace.
 - If Alinea has modern practices I wasn't told about (tests, modern JS, translations), they should be factored in.
 
 ---
 
-## Slide 12 — Recommendation & Next steps
+## Recommendation & Next steps
 
 - Short-term: adopt `payload-cms` as the canonical platform for new editorial features and migrate content incrementally.
 - Medium-term: build migration scripts that extract structured content from the old DB into the Payload collections.
@@ -148,12 +148,3 @@ Advantage: payload-cms — easier to keep updated and secure.
 - `src/collections/*`: typed collections, `versions: { drafts: true }` for Projects, `lifecycle` business field
 - `tests/` and `scripts/seed/` exist
 - ESLint/Prettier, `yarn build` successful
-
-
----
-
-If you want, I can:
-- Produce a PPTX version of this slide deck and place it in `docs/`.
-- Do an in-repo scan of `C:\Users\draxx\Sources\next\Alinea.Products.Next.UI` if you copy that repo into this workspace or provide its package.json and a few representative files (e.g., Home controller, auth code, and a DB schema example).
-
-Which next step would you like? 
