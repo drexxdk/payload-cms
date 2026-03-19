@@ -65,3 +65,49 @@ That's it! The Docker instance will help you get up and running quickly while al
 ## Questions
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+
+## RBAC Model
+
+This project uses a two-layer permission model:
+
+- Global roles on `users`
+  - `super-admin`: full system access
+  - `user`: normal authenticated user
+- Project-scoped memberships on `projects`
+  - `viewers`: can view that project and child content
+  - `editors`: can view and edit that project and child content
+  - `managers`: can do everything editors can, plus manage `viewers` and `editors` on that project
+
+Only `super-admin` can:
+
+- create new projects
+- delete projects
+- manage global user roles
+- assign project `managers`
+
+Project `managers` can manage project membership for:
+
+- `viewers`
+- `editors`
+
+## Demo Accounts And Seed Data
+
+Run the global seed with:
+
+```bash
+yarn seed
+```
+
+The seed ensures a demo project and demo memberships exist:
+
+- Project: `RBAC Demo Project`
+- Group: `RBAC Demo Group`
+- Course: `RBAC Demo Course`
+
+The seed also ensures these test users exist with password `test`:
+
+- `project-viewer@payloadcms.local`
+- `project-editor@payloadcms.local`
+- `project-manager@payloadcms.local`
+
+Those users are attached to `RBAC Demo Project` as viewer, editor, and manager respectively.

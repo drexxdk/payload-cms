@@ -26,6 +26,7 @@ function summarizeUsers(value: unknown): string {
 
 async function summarizeUsersForAdmin(req: PayloadRequest, value: unknown) {
   if (!Array.isArray(value) || value.length === 0) return 'None'
+  if (!isSuperAdmin(req.user)) return summarizeUsers(value)
 
   const ids = value
     .map((entry) => {
