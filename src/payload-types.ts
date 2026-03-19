@@ -159,6 +159,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Authenticated users with global roles and project-scoped memberships.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -200,6 +202,8 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Top-level workspaces that contain groups, courses, and access memberships.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
@@ -259,6 +263,8 @@ export interface Project {
   createdAt: string;
 }
 /**
+ * Reference types that classify projects and help organize delivery work.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "project-types".
  */
@@ -275,6 +281,8 @@ export interface ProjectType {
   createdAt: string;
 }
 /**
+ * Project-scoped bundles of products that make the project structure easier to inspect.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "project-groups".
  */
@@ -293,6 +301,8 @@ export interface ProjectGroup {
   createdAt: string;
 }
 /**
+ * Reusable product records that can be linked into courses and grouped inside projects.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
@@ -317,6 +327,8 @@ export interface Product {
   createdAt: string;
 }
 /**
+ * Reference types that classify products across courses and project groups.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "product-types".
  */
@@ -332,6 +344,8 @@ export interface ProductType {
   createdAt: string;
 }
 /**
+ * Project-scoped course records linked to the products they use.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "courses".
  */
@@ -351,11 +365,20 @@ export interface Course {
   createdAt: string;
 }
 /**
+ * Shared asset library for images, video, GeoGebra, ThingLink, downloads, and future media types.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * High-level media type so the library can grow beyond image uploads cleanly.
+   */
+  kind: 'image' | 'video' | 'geogebra' | 'thinglink' | 'download' | 'other';
+  /**
+   * Accessibility text for visual media. Keep this populated for images and previews.
+   */
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -370,6 +393,8 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Reusable palette definitions used by custom UI and branded content assets.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "palettes".
  */
@@ -520,6 +545,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  kind?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -5,7 +5,9 @@ export const ProjectTypes: CollectionConfig = {
   slug: 'project-types',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['id', 'title'],
+    group: 'Delivery',
+    description: 'Reference types that classify projects and help organize delivery work.',
+    defaultColumns: ['title', 'description'],
   },
   access: {
     read: () => true,

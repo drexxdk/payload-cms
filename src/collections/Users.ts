@@ -17,6 +17,9 @@ export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
     useAsTitle: 'email',
+    group: 'Access & People',
+    description: 'Authenticated users with global roles and project-scoped memberships.',
+    defaultColumns: ['email', 'roles', 'viewableProjects', 'editableProjects', 'managedProjects'],
   },
   auth: true,
   hooks: {

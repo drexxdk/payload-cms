@@ -6,6 +6,8 @@ export const Palettes = {
   slug: 'palettes',
   admin: {
     useAsTitle: 'name',
+    group: 'Content Assets',
+    description: 'Reusable palette definitions used by custom UI and branded content assets.',
     defaultColumns: ['name', 'palette'],
   },
   access: {

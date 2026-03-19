@@ -17,12 +17,35 @@ import { Palettes } from './collections/Palettes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const baseLexicalEditor = lexicalEditor()
+
+const editor: typeof baseLexicalEditor = async (args) => {
+  const adapter = await baseLexicalEditor(args)
+
+  return {
+    ...adapter,
+    FieldComponent: {
+      path: '/components/admin/ProjectDescriptionField',
+    },
+    generateImportMap: (importMapArgs) => {
+      importMapArgs.addToImportMap('/components/admin/ProjectDescriptionField')
+      return adapter.generateImportMap?.(importMapArgs)
+    },
+  }
+}
 
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    components: {
+      views: {
+        dashboard: {
+          Component: '/components/admin/AdminDashboard',
+        },
+      },
     },
   },
   localization: {
@@ -41,7 +64,7 @@ export default buildConfig({
     Courses,
     Palettes,
   ],
-  editor: lexicalEditor(),
+  editor,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

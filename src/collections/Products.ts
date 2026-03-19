@@ -5,7 +5,10 @@ export const Products: CollectionConfig = {
   slug: 'products',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'isbn', 'productType'],
+    group: 'Catalog',
+    description:
+      'Reusable product records that can be linked into courses and grouped inside projects.',
+    defaultColumns: ['title', 'productType', 'isbn', 'updatedAt'],
   },
   access: {
     read: () => true,

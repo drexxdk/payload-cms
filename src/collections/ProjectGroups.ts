@@ -10,6 +10,9 @@ export const ProjectGroups: CollectionConfig = {
   slug: 'project-groups',
   admin: {
     useAsTitle: 'title',
+    group: 'Delivery',
+    description:
+      'Project-scoped bundles of products that make the project structure easier to inspect.',
     defaultColumns: ['title', 'project', 'createdAt'],
   },
   access: {

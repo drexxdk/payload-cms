@@ -5,7 +5,9 @@ export const ProductTypes: CollectionConfig = {
   slug: 'product-types',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['id', 'title'],
+    group: 'Catalog',
+    description: 'Reference types that classify products across courses and project groups.',
+    defaultColumns: ['title'],
   },
   access: {
     read: () => true,

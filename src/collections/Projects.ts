@@ -65,6 +65,8 @@ export const Projects: CollectionConfig = {
   slug: 'projects',
   admin: {
     useAsTitle: 'title',
+    group: 'Delivery',
+    description: 'Top-level workspaces that contain groups, courses, and access memberships.',
     defaultColumns: [
       'title',
       'status',

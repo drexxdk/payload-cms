@@ -10,6 +10,8 @@ export const Courses: CollectionConfig = {
   slug: 'courses',
   admin: {
     useAsTitle: 'title',
+    group: 'Delivery',
+    description: 'Project-scoped course records linked to the products they use.',
     defaultColumns: ['title', 'project', 'createdAt'],
   },
   access: {

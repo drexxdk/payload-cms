@@ -14,3 +14,89 @@
     width: 100%;
     margin-bottom: 0;
 }
+
+.stable-description-field {
+    margin-bottom: var(--base);
+}
+
+.stable-description-field__field:empty {
+    display: none;
+}
+
+.stable-description-field__shimmer {
+    height: calc(var(--base) * 2.6 + 14px) !important;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--style-radius-s);
+    background: var(--theme-input-bg);
+    box-shadow: 0 2px 2px -1px #0000001a;
+}
+
+.stable-description-field__field:has(.shimmer-effect) {
+    display: none;
+}
+
+.stable-description-field:has(.stable-description-field__field .rich-text-lexical) > .stable-description-field__shell {
+    display: none;
+}
+
+.rich-text-lexical__wrap {
+    box-shadow: 0 2px 2px -1px #0000001a;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--style-radius-s);
+    /* background: var(--theme-input-bg); */
+    transition-property: border-color, box-shadow, background-color;
+    transition-duration: 0.1s, 0.1s, 0.5s;
+    transition-timing-function: cubic-bezier(0, 0.2, 0.2, 1);
+}
+
+.rich-text-lexical__wrap:hover {
+    box-shadow: 0 2px 2px -1px #0003;
+    border-color: var(--theme-elevation-250);
+}
+
+.rich-text-lexical:focus-within .rich-text-lexical__wrap {
+    border-color: var(--theme-elevation-400);
+}
+
+.rich-text-lexical .editor-container,
+.rich-text-lexical .ContentEditable__root {
+    min-height: calc(var(--base) * 2.6);
+}
+
+.rich-text-lexical .ContentEditable__root {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.rich-text-lexical .LexicalEditorTheme__placeholder {
+    top: 10px;
+}
+
+.rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .add-block-menu,
+.rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .draggable-block-menu,
+.rich-text-lexical:has(.ContentEditable__root > .LexicalEditorTheme__paragraph:only-child > br:only-child) .insert-paragraph-at-end {
+    display: none !important;
+}
+
+@media (max-width: 1440px) {
+    body:has(.nav:not(.nav--nav-hydrated)) .nav:not(.nav--nav-hydrated) {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        border: 0 !important;
+    }
+
+    body:has(.nav:not(.nav--nav-hydrated)) .template-default__nav-toggler-wrapper {
+        visibility: hidden;
+        width: 0 !important;
+    }
+
+    body:has(.nav:not(.nav--nav-hydrated)) .template-default__wrap {
+        min-width: 100%;
+    }
+
+    .template-default.template-default--nav-hydrated:not(.template-default--nav-open) {
+        grid-template-columns: 0 auto !important;
+        transition: none !important;
+    }
+}
