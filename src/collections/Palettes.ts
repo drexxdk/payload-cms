@@ -10,9 +10,9 @@ export const Palettes = {
   },
   access: {
     read: () => true,
-    create: () => true,
+    create: () => false,
     update: () => true,
-    delete: () => true,
+    delete: () => false,
   },
   fields: [
     { name: 'name', type: 'text', required: true, localized: true },

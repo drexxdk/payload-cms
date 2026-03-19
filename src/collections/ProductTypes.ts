@@ -9,9 +9,9 @@ export const ProductTypes: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req: { user } }) => isSuperAdmin(user),
+    create: () => false,
     update: ({ req: { user } }) => isSuperAdmin(user),
-    delete: ({ req: { user } }) => isSuperAdmin(user),
+    delete: () => false,
   },
   fields: [
     {
