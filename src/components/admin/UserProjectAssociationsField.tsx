@@ -8,41 +8,67 @@ const PAGE_SIZE = 10
 
 const COPY = {
   en: {
+    active: 'Active',
+    archived: 'Archived',
+    draft: 'Draft',
     empty: 'No projects in this association.',
     error: 'Unable to load associated projects.',
+    loading: 'Loading...',
     next: 'Next',
+    of: 'of',
     page: 'Page',
     previous: 'Previous',
+    published: 'Published',
     total: 'projects',
   },
   da: {
+    active: 'Aktiv',
+    archived: 'Arkiveret',
+    draft: 'Kladde',
     empty: 'Ingen projekter i denne tilknytning.',
     error: 'Kunne ikke indlaese tilknyttede projekter.',
+    loading: 'Indlaeser...',
     next: 'Naeste',
+    of: 'af',
     page: 'Side',
     previous: 'Forrige',
+    published: 'Publiceret',
     total: 'projekter',
   },
   de: {
+    active: 'Aktiv',
+    archived: 'Archiviert',
+    draft: 'Entwurf',
     empty: 'Keine Projekte in dieser Zuordnung.',
     error: 'Zugeordnete Projekte konnten nicht geladen werden.',
+    loading: 'Laedt...',
     next: 'Weiter',
+    of: 'von',
     page: 'Seite',
     previous: 'Zurueck',
+    published: 'Veroeffentlicht',
     total: 'Projekte',
   },
   fr: {
+    active: 'Actif',
+    archived: 'Archive',
+    draft: 'Brouillon',
     empty: 'Aucun projet dans cette association.',
     error: 'Impossible de charger les projets associes.',
+    loading: 'Chargement...',
     next: 'Suivant',
+    of: 'sur',
     page: 'Page',
     previous: 'Precedent',
+    published: 'Publie',
     total: 'projets',
   },
 } as const
 
 type ProjectDocument = {
+  _status?: null | string
   id: number | string
+  lifecycle?: null | string
   title?: null | string
 }
 
@@ -71,6 +97,11 @@ const buildParams = (roleField: string, userID: number | string, page: number) =
   depth: 0,
   limit: PAGE_SIZE,
   page,
+  select: {
+    _status: true,
+    lifecycle: true,
+    title: true,
+  },
   sort: 'title',
   where: {
     [roleField]: {
@@ -78,6 +109,26 @@ const buildParams = (roleField: string, userID: number | string, page: number) =
     },
   },
 })
+
+const formatProjectMeta = (project: ProjectDocument, copy: (typeof COPY)[keyof typeof COPY]) => {
+  const parts: string[] = []
+
+  if (project._status === 'published') {
+    parts.push(copy.published)
+  } else if (project._status === 'draft') {
+    parts.push(copy.draft)
+  }
+
+  if (project.lifecycle === 'active') {
+    parts.push(copy.active)
+  } else if (project.lifecycle === 'archived') {
+    parts.push(copy.archived)
+  } else if (typeof project.lifecycle === 'string' && project.lifecycle.length > 0) {
+    parts.push(project.lifecycle)
+  }
+
+  return parts.join(' | ')
+}
 
 const UserProjectAssociationsField: JoinFieldClientComponent = ({ field }) => {
   const { id } = useDocumentInfo()
@@ -114,6 +165,7 @@ const UserProjectAssociationsField: JoinFieldClientComponent = ({ field }) => {
       style={{
         border: '1px solid var(--theme-elevation-150)',
         borderRadius: '12px',
+        marginBottom: '16px',
         padding: '16px',
         background: 'var(--theme-elevation-0)',
       }}
@@ -140,17 +192,17 @@ const UserProjectAssociationsField: JoinFieldClientComponent = ({ field }) => {
         {totalDocs} {copy.total}
       </div>
 
-      {isLoading ? <div>Loading...</div> : null}
+      {isLoading ? <div>{copy.loading}</div> : null}
       {!isLoading && isError ? <div>{copy.error}</div> : null}
       {!isLoading && !isError && docs.length === 0 ? <div>{copy.empty}</div> : null}
 
       {!isLoading && !isError && docs.length > 0 ? (
         <>
-          <ol
+          <ul
             style={{
               display: 'grid',
-              gap: '8px',
-              listStyle: 'decimal',
+              gap: '12px',
+              listStyle: 'disc',
               margin: 0,
               paddingLeft: '20px',
             }}
@@ -161,14 +213,28 @@ const UserProjectAssociationsField: JoinFieldClientComponent = ({ field }) => {
                   href={`/admin/collections/projects/${project.id}`}
                   style={{
                     color: 'var(--theme-text)',
+                    display: 'inline-block',
                     textDecoration: 'none',
                   }}
                 >
                   {project.title || String(project.id)}
                 </a>
+
+                {formatProjectMeta(project, copy) ? (
+                  <div
+                    style={{
+                      color: 'var(--theme-text)',
+                      fontSize: '12px',
+                      marginTop: '2px',
+                      opacity: 0.65,
+                    }}
+                  >
+                    {formatProjectMeta(project, copy)}
+                  </div>
+                ) : null}
               </li>
             ))}
-          </ol>
+          </ul>
 
           {totalPages > 1 ? (
             <div
@@ -177,42 +243,52 @@ const UserProjectAssociationsField: JoinFieldClientComponent = ({ field }) => {
                 display: 'flex',
                 gap: '12px',
                 marginTop: '16px',
+                opacity: 0.85,
               }}
             >
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={currentPage <= 1}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: currentPage <= 1 ? 'var(--theme-elevation-400)' : 'var(--theme-text)',
-                  cursor: currentPage <= 1 ? 'default' : 'pointer',
-                  padding: 0,
-                }}
-              >
-                {copy.previous}
-              </button>
+              {currentPage > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--theme-text)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '2px',
+                  }}
+                >
+                  {copy.previous}
+                </button>
+              ) : (
+                <span style={{ color: 'var(--theme-elevation-400)' }}>{copy.previous}</span>
+              )}
 
               <span>
-                {copy.page} {currentPage} / {totalPages}
+                {copy.page} {currentPage} {copy.of} {totalPages}
               </span>
 
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                disabled={currentPage >= totalPages}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color:
-                    currentPage >= totalPages ? 'var(--theme-elevation-400)' : 'var(--theme-text)',
-                  cursor: currentPage >= totalPages ? 'default' : 'pointer',
-                  padding: 0,
-                }}
-              >
-                {copy.next}
-              </button>
+              {currentPage < totalPages ? (
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--theme-text)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '2px',
+                  }}
+                >
+                  {copy.next}
+                </button>
+              ) : (
+                <span style={{ color: 'var(--theme-elevation-400)' }}>{copy.next}</span>
+              )}
             </div>
           ) : null}
         </>
