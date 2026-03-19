@@ -36,5 +36,7 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
-  }
+  },
+  "workbench.browser.openLocalhostLinks": true,
+  "workbench.browser.enableChatTools": true
 }

@@ -7,15 +7,10 @@ const ROLE_OPTIONS = [
 ]
 
 const canManageRoles = async ({ req }: { req: PayloadRequest }) => {
-  if (isSuperAdmin(req.user)) return true
-
-  const existingUsers = await req.payload.find({
-    collection: 'users',
-    depth: 0,
-    limit: 1,
-  })
-
-  return existingUsers.totalDocs === 0
+  // Only super-admins may manage roles via the admin UI.
+  // The initial user (when no users exist) will be assigned `super-admin`
+  // by the server-side `beforeChange` hook, and the field should be hidden.
+  return isSuperAdmin(req.user)
 }
 
 export const Users: CollectionConfig = {
@@ -55,6 +50,9 @@ export const Users: CollectionConfig = {
       defaultValue: ['user'],
       required: true,
       saveToJWT: true,
+      admin: {
+        condition: ({ req }) => isSuperAdmin(req?.user),
+      },
       access: {
         create: canManageRoles,
         update: canManageRoles,

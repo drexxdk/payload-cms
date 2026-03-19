@@ -111,3 +111,28 @@ The seed also ensures these test users exist with password `test`:
 - `project-manager@payloadcms.local`
 
 Those users are attached to `RBAC Demo Project` as viewer, editor, and manager respectively.
+
+## Developer scripts
+
+This project includes a few npm scripts that help with local development and Payload tooling. Short descriptions and when to run them:
+
+- `devsafe`: like `dev` but removes the Next.js build cache first. Use if you see strange dev-only issues or corrupted caches.
+- `generate:importmap`: regenerates the admin `importMap` used by Payload to resolve custom admin component paths. Run this after adding or moving admin components (the import paths declared in `src/*/components`).
+- `generate:types`: runs Payload's type generator and writes `payload-types.ts`. Run this after schema/collection changes so TypeScript types stay in sync.
+- `payload`: runs the Payload CLI. Useful for commands like `payload login`, `payload export`, or running local migrations if you use Payload's CLI features.
+
+Which ones you need to run:
+
+- For usual development: `yarn install` then `yarn dev` (or `yarn devsafe` if you need a clean start).
+- After changing collections/components: run `yarn generate:types` and `yarn generate:importmap`.
+- When working with Payload tooling or the local CLI: use `yarn payload` followed by the CLI subcommand.
+
+Quick checklist to get started locally (Postgres setup shown):
+
+1. Copy env: `cp .env.example .env` and update values (set `DATABASE_URL` to a Postgres URL and `PAYLOAD_SECRET`).
+2. Start Postgres: `yarn compose:postgres` (this runs `docker-compose -f docker-compose.postgres.yml up -d`).
+3. Install deps: `yarn install`.
+4. Seed demo data: `yarn seed`.
+5. Start dev server: `yarn dev` or `yarn devsafe`.
+
+If anything fails (DB connection, seeds), check `DATABASE_URL` and that Postgres is reachable on the host/port specified.
