@@ -69,12 +69,16 @@ export const Projects: CollectionConfig = {
     description: 'Top-level workspaces that contain groups, courses, and access memberships.',
     defaultColumns: [
       'title',
-      'status',
+      '_status',
+      'lifecycle',
       'viewerSummary',
       'editorSummary',
       'managerSummary',
       'createdAt',
     ],
+  },
+  versions: {
+    drafts: true,
   },
   access: {
     read: ({ req: { user } }) => buildProjectReadAccess(user),
@@ -204,11 +208,48 @@ export const Projects: CollectionConfig = {
       },
     },
     {
-      name: 'status',
+      name: 'lifecycle',
+      label: {
+        en: 'Lifecycle',
+        da: 'Livscyklus',
+        de: 'Lebenszyklus',
+        fr: 'Cycle de vie',
+      },
       type: 'select',
-      options: ['draft', 'active', 'archived'],
-      defaultValue: 'draft',
+      options: [
+        {
+          label: {
+            en: 'Active',
+            da: 'Aktiv',
+            de: 'Aktiv',
+            fr: 'Actif',
+          },
+          value: 'active',
+        },
+        {
+          label: {
+            en: 'Archived',
+            da: 'Arkiveret',
+            de: 'Archiviert',
+            fr: 'Archive',
+          },
+          value: 'archived',
+        },
+      ],
+      defaultValue: 'active',
       required: true,
+      admin: {
+        description: {
+          en: 'Business lifecycle separate from Payload draft and published status.',
+          da: 'Forretningsmaessig livscyklus adskilt fra Payloads kladde- og publiceringsstatus.',
+          de: 'Geschaeftlicher Lebenszyklus getrennt vom Payload-Status fuer Entwurf und Veroeffentlichung.',
+          fr: 'Cycle de vie metier distinct du statut de brouillon et de publication de Payload.',
+        },
+      },
+      hooks: {
+        afterRead: [({ value }) => (value === 'draft' ? 'active' : value)],
+        beforeValidate: [({ value }) => (value === 'draft' ? 'active' : value)],
+      },
     },
 
     {

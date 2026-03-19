@@ -1,5 +1,9 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { da } from '@payloadcms/translations/languages/da'
+import { de } from '@payloadcms/translations/languages/de'
+import { en } from '@payloadcms/translations/languages/en'
+import { fr } from '@payloadcms/translations/languages/fr'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -41,11 +45,21 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
+      providers: ['/components/admin/AdminNavBootstrap'],
       views: {
         dashboard: {
           Component: '/components/admin/AdminDashboard',
         },
       },
+    },
+  },
+  i18n: {
+    fallbackLanguage: 'en',
+    supportedLanguages: {
+      da,
+      de,
+      en,
+      fr,
     },
   },
   localization: {

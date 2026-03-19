@@ -21,25 +21,26 @@
     "db:drop": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/db/drop-db.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^1.8.0",
     "@payloadcms/db-postgres": "^3.79.1",
     "@payloadcms/next": "3.79.1",
     "@payloadcms/richtext-lexical": "3.79.1",
+    "@payloadcms/translations": "3.79.1",
     "@payloadcms/ui": "3.79.1",
+    "@tailwindcss/postcss": "latest",
+    "autoprefixer": "latest",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "next": "15.4.11",
     "payload": "3.79.1",
     "pg": "^8.20.0",
+    "postcss": "latest",
+    "postcss-nesting": "latest",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "sharp": "0.34.2",
-    "tailwindcss": "latest",
-    "postcss": "latest",
-    "@tailwindcss/postcss": "latest",
-    "@headlessui/react": "^1.8.0",
-    "autoprefixer": "latest",
-    "postcss-nesting": "latest"
+    "tailwindcss": "latest"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",

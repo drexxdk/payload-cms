@@ -70,7 +70,7 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
-        defaultColumns: ['title', 'status', 'createdAt'],
+        defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },
     {
@@ -82,7 +82,7 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
-        defaultColumns: ['title', 'status', 'createdAt'],
+        defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },
     {
@@ -94,7 +94,7 @@ export const Users: CollectionConfig = {
         read: ({ req }) => isSuperAdmin(req.user),
       },
       admin: {
-        defaultColumns: ['title', 'status', 'createdAt'],
+        defaultColumns: ['title', '_status', 'lifecycle', 'createdAt'],
       },
     },
   ],

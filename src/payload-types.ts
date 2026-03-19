@@ -257,10 +257,14 @@ export interface Project {
   viewerSummary?: string | null;
   editorSummary?: string | null;
   managerSummary?: string | null;
-  status: 'draft' | 'active' | 'archived';
+  /**
+   * Business lifecycle separate from Payload draft and published status.
+   */
+  lifecycle: 'active' | 'archived';
   isPublic?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Reference types that classify projects and help organize delivery work.
@@ -609,10 +613,11 @@ export interface ProjectsSelect<T extends boolean = true> {
   viewerSummary?: T;
   editorSummary?: T;
   managerSummary?: T;
-  status?: T;
+  lifecycle?: T;
   isPublic?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

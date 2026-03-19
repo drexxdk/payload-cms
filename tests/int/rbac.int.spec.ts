@@ -106,7 +106,7 @@ describe('RBAC', () => {
         collection: 'projects',
         id: projectID,
         data: {
-          status: 'active',
+          lifecycle: 'active',
         },
         depth: 0,
         overrideAccess: false,
@@ -122,7 +122,7 @@ describe('RBAC', () => {
       collection: 'projects',
       id: projectID,
       data: {
-        status: 'active',
+        lifecycle: 'active',
       },
       depth: 0,
       overrideAccess: false,
@@ -130,7 +130,7 @@ describe('RBAC', () => {
     })
 
     expect(updated.id).toBe(projectID)
-    expect(updated.status).toBe('active')
+    expect(updated.lifecycle).toBe('active')
   })
 
   it('manager can edit project memberships but cannot assign managers', async () => {

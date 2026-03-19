@@ -189,7 +189,8 @@ export async function seedProjects(payload: Payload) {
   const projectData = {
     title: DEMO_PROJECT.title,
     projectType: projectType.id,
-    status: 'active' as const,
+    lifecycle: 'active' as const,
+    _status: 'published' as const,
     isPublic: false,
     viewers: [viewer.id],
     editors: [editor.id],
