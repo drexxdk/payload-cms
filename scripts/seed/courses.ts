@@ -1,4 +1,3 @@
-import path from 'path'
 import type { Payload } from 'payload'
 
 import type {
@@ -15,13 +14,8 @@ import {
   COURSE_SEED_DATA,
   type CourseSeedDefinition,
 } from './course-data'
+import { createScopedSeedImageRequest, ensureSeedHeroImage } from './ensure-seed-hero-image'
 import { DEMO_PROJECT } from './demo'
-
-const DEMO_IMAGE_FILE = path.resolve(
-  process.cwd(),
-  'media',
-  'Screenshot_20241017_110011_Outlook.jpg',
-)
 
 type ProjectContext = {
   courseByTitle: Map<string, Course>
@@ -30,7 +24,9 @@ type ProjectContext = {
   projectID: number
 }
 
-function richTextDocument(paragraphs: string[]) {
+type RichTextValue = NonNullable<Course['description']>
+
+function richTextDocument(paragraphs: string[]): RichTextValue {
   return {
     root: {
       children: paragraphs.map((text) => ({
@@ -38,25 +34,25 @@ function richTextDocument(paragraphs: string[]) {
           {
             detail: 0,
             format: 0,
-            mode: 'normal',
+            mode: 'normal' as const,
             style: '',
             text,
-            type: 'text',
+            type: 'text' as const,
             version: 1,
           },
         ],
-        direction: 'ltr',
-        format: '',
+        direction: 'ltr' as const,
+        format: '' as const,
         indent: 0,
         textFormat: 0,
         textStyle: '',
-        type: 'paragraph',
+        type: 'paragraph' as const,
         version: 1,
       })),
-      direction: 'ltr',
-      format: '',
+      direction: 'ltr' as const,
+      format: '' as const,
       indent: 0,
-      type: 'root',
+      type: 'root' as const,
       version: 1,
     },
   }
@@ -160,20 +156,55 @@ async function ensureScopedMedia(
   }
 
   if (existing.docs[0]) {
-    return payload.update({
+    await payload.update({
       collection: 'media',
       id: existing.docs[0].id,
       data,
       depth: 0,
     })
+
+    return existing.docs[0]
   }
 
-  return payload.create({
+  const filePath = await ensureSeedHeroImage(
+    createScopedSeedImageRequest({
+      alt: args.alt,
+      scope: args.scope,
+    }),
+  )
+
+  await payload.create({
     collection: 'media',
     data,
     depth: 0,
-    filePath: DEMO_IMAGE_FILE,
+    filePath,
   })
+
+  const created = await payload.find({
+    collection: 'media',
+    where: {
+      and: [
+        {
+          alt: {
+            equals: args.alt,
+          },
+        },
+        {
+          project: {
+            equals: context.projectID,
+          },
+        },
+      ],
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  if (!created.docs[0]) {
+    throw new Error(`Failed to create scoped media: ${args.alt}`)
+  }
+
+  return created.docs[0]
 }
 
 async function ensureCourseDetails(
@@ -187,7 +218,7 @@ async function ensureCourseDetails(
     throw new Error(`Missing seeded course: ${courseDefinition.title}`)
   }
 
-  return payload.update({
+  await payload.update({
     collection: 'courses',
     id: course.id,
     data: {
@@ -198,6 +229,12 @@ async function ensureCourseDetails(
       project: context.projectID,
       title: courseDefinition.title,
     },
+    depth: 0,
+  })
+
+  return payload.findByID({
+    collection: 'courses',
+    id: course.id,
     depth: 0,
   })
 }
@@ -278,18 +315,46 @@ async function ensureCourseContent(
       title: definition.title,
     }
 
-    const content = existing.docs[0]
-      ? await payload.update({
-          collection: 'course-content',
-          id: existing.docs[0].id,
-          data,
-          depth: 0,
-        })
-      : await payload.create({
-          collection: 'course-content',
-          data,
-          depth: 0,
-        })
+    if (existing.docs[0]) {
+      await payload.update({
+        collection: 'course-content',
+        id: existing.docs[0].id,
+        data,
+        depth: 0,
+      })
+    } else {
+      await payload.create({
+        collection: 'course-content',
+        data,
+        depth: 0,
+      })
+    }
+
+    const contentResult = await payload.find({
+      collection: 'course-content',
+      where: {
+        and: [
+          {
+            title: {
+              equals: definition.title,
+            },
+          },
+          {
+            project: {
+              equals: context.projectID,
+            },
+          },
+        ],
+      },
+      depth: 0,
+      limit: 1,
+    })
+
+    const content = contentResult.docs[0]
+
+    if (!content) {
+      throw new Error(`Failed to upsert course content: ${definition.title}`)
+    }
 
     contentByKey.set(definition.key, content)
   }
@@ -343,18 +408,48 @@ async function ensureChapter(
     title: chapterDefinition.title,
   }
 
-  return existing.docs[0]
-    ? payload.update({
-        collection: 'course-chapters',
-        id: existing.docs[0].id,
-        data,
-        depth: 0,
-      })
-    : payload.create({
-        collection: 'course-chapters',
-        data,
-        depth: 0,
-      })
+  if (existing.docs[0]) {
+    await payload.update({
+      collection: 'course-chapters',
+      id: existing.docs[0].id,
+      data,
+      depth: 0,
+    })
+  } else {
+    await payload.create({
+      collection: 'course-chapters',
+      data,
+      depth: 0,
+    })
+  }
+
+  const chapterResult = await payload.find({
+    collection: 'course-chapters',
+    where: {
+      and: [
+        {
+          title: {
+            equals: chapterDefinition.title,
+          },
+        },
+        {
+          course: {
+            equals: course.id,
+          },
+        },
+      ],
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  const chapter = chapterResult.docs[0]
+
+  if (!chapter) {
+    throw new Error(`Failed to upsert course chapter: ${chapterDefinition.title}`)
+  }
+
+  return chapter
 }
 
 async function ensurePage(
@@ -417,18 +512,48 @@ async function ensurePage(
     title: pageDefinition.title,
   }
 
-  return existing.docs[0]
-    ? payload.update({
-        collection: 'course-pages',
-        id: existing.docs[0].id,
-        data,
-        depth: 0,
-      })
-    : payload.create({
-        collection: 'course-pages',
-        data,
-        depth: 0,
-      })
+  if (existing.docs[0]) {
+    await payload.update({
+      collection: 'course-pages',
+      id: existing.docs[0].id,
+      data,
+      depth: 0,
+    })
+  } else {
+    await payload.create({
+      collection: 'course-pages',
+      data,
+      depth: 0,
+    })
+  }
+
+  const pageResult = await payload.find({
+    collection: 'course-pages',
+    where: {
+      and: [
+        {
+          title: {
+            equals: pageDefinition.title,
+          },
+        },
+        {
+          chapter: {
+            equals: chapter.id,
+          },
+        },
+      ],
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  const page = pageResult.docs[0]
+
+  if (!page) {
+    throw new Error(`Failed to upsert course page: ${pageDefinition.title}`)
+  }
+
+  return page
 }
 
 export async function seedCourses(payload: Payload) {

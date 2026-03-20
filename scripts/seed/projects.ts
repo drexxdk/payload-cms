@@ -1,13 +1,7 @@
-import path from 'path'
 import type { Payload } from 'payload'
 import { COURSE_SEED_DATA } from './course-data'
+import { createProjectCourseHeroImageRequest, ensureSeedHeroImage } from './ensure-seed-hero-image'
 import { DEMO_PASSWORD, DEMO_PROJECT, DEMO_USERS } from './demo'
-
-const DEMO_COURSE_HERO_FILE = path.resolve(
-  process.cwd(),
-  'media',
-  'Screenshot_20241017_110011_Outlook.jpg',
-)
 
 type SeedProjectDefinition = {
   title: string
@@ -124,6 +118,8 @@ async function ensureCourseHero(payload: Payload, projectID: number, courseTitle
     return existing.docs[0]
   }
 
+  const filePath = await ensureSeedHeroImage(createProjectCourseHeroImageRequest(courseTitle))
+
   return payload.create({
     collection: 'media',
     data: {
@@ -133,7 +129,7 @@ async function ensureCourseHero(payload: Payload, projectID: number, courseTitle
       project: projectID,
     },
     depth: 0,
-    filePath: DEMO_COURSE_HERO_FILE,
+    filePath,
   })
 }
 

@@ -39,12 +39,6 @@ function normalizeNumericID(value: number | string | null | undefined): number |
   return null
 }
 
-function uniqueIDs(ids: Array<number | null | undefined>): number[] {
-  return [
-    ...new Set(ids.filter((id): id is number => typeof id === 'number' && Number.isFinite(id))),
-  ]
-}
-
 async function findProductsForCourse(req: PayloadRequest, courseID: number): Promise<number[]> {
   const result = await req.payload.find({
     collection: 'products',
