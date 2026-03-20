@@ -1,9 +1,4 @@
-
-# Presentation: Comparing payload-cms and Alinea.Products.Next.UI
-
-> Note: I scanned the legacy project at `C:\Users\draxx\Sources\next\Alinea.Products.Next.UI` and replaced earlier assumptions with verified facts and file citations.
-
----
+# Comparing payload-cms and Alinea.Products.Next.UI
 
 ## Summary
 
@@ -123,13 +118,6 @@ Key strengths: payload-cms — easier to model and migrate content programmatica
   - .NET 4.8 is legacy; staying current may require significant rewrite for modern UIs
 
 Advantage: payload-cms — easier to keep updated and secure.
-
----
-
-## Risks and Caveats
-
-- This comparison used the description you provided for Alinea.Products.Next.UI because I could not open `C:\Users\draxx\Sources\next\Alinea.Products.Next.UI` from this workspace.
-- If Alinea has modern practices I wasn't told about (tests, modern JS, translations), they should be factored in.
 
 ---
 

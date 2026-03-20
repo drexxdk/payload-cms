@@ -6,33 +6,154 @@ This template comes configured with the bare minimum to get started on anything 
 
 This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
 
-## Quick Start - local setup
+## Getting started (local - Postgres)
 
-To spin up this template locally, follow these steps:
+The following steps cover everything needed to run this repository locally using the included Postgres Docker compose configuration and the project's seed scripts.
 
-### Clone
+Prerequisites
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+- Install Docker Desktop: https://www.docker.com/get-started and ensure the service is running.
+- Install Node.js (v18 or later recommended). Check with `node -v`.
+  Install Yarn (if you don't already have it):
 
-### Development
+```bash
+npm install -g yarn
+```
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+Clone
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+```bash
+git clone https://github.com/drexxdk/payload-cms.git
+cd payload-cms
+```
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+Environment
 
-#### Docker (Optional)
+1. Copy the example environment file and open it in VS Code:
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+```powershell
+# PowerShell (Windows)
+copy .env.example .env
 
-To do so, follow these steps:
+# macOS / Linux
+cp .env.example .env
+```
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+Open `.env` in Visual Studio Code to edit values.
+
+2. Edit `.env` and set at minimum:
+
+- `DATABASE_URL` — a Postgres connection string (the docker-compose script below uses the default DB name from `docker-compose.postgres.yml`).
+- `PAYLOAD_SECRET` — a random 32+ byte secret. You can generate one quickly:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Start Postgres in Docker
+
+This repo includes `docker-compose.postgres.yml` configured for local development.
+
+Use either the provided Yarn script or Docker Compose directly.
+
+```bash
+# via yarn script (preferred)
+yarn compose:postgres
+
+# or directly
+docker-compose -f docker-compose.postgres.yml up -d
+```
+
+Verify Postgres is running before proceeding. On Windows, check Docker Desktop or run `docker ps`.
+
+Install dependencies and generate types
+
+```bash
+yarn install
+
+# Generate Payload types (run after any collection changes)
+yarn generate:types
+```
+
+Seed the database
+
+The project includes idempotent seed scripts that create demo projects, users, palettes, products, courses, and also pre-generate demo hero images used by the seeds.
+
+```bash
+# Run the global seed (this will pre-generate hero images and create/update demo records)
+yarn seed
+```
+
+What the seed creates
+
+- Demo project: `RBAC Demo Project`
+- Demo group: `RBAC Demo Group`
+- Demo course: `RBAC Demo Course`
+- Demo users (password: `test`):
+  - Super admin: `admin@mail.com` / `test`
+  - Viewer: `viewer@mail.com` / `test`
+  - Editor: `editor@mail.com` / `test`
+  - Manager: `manager@mail.com` / `test`
+
+The seeded users are attached to `RBAC Demo Project` with appropriate roles (viewer, editor, manager). The super-admin user has global `super-admin` privileges.
+
+Run the app locally
+
+```bash
+# Start Next.js dev server
+yarn dev
+```
+
+Open the site:
+
+- Frontend: http://localhost:3000
+- Admin: http://localhost:3000/admin
+
+Login with seeded demo accounts above. The admin UI lets you explore collections and the seeded demo data.
+
+Helpful management commands
+
+- Stop Postgres:
+
+```bash
+docker-compose -f docker-compose.postgres.yml down
+```
+
+- Drop local DB (use with caution):
+
+```bash
+# if the repo includes a helper script
+yarn db:drop
+```
+
+- Re-run the seed after clearing DB:
+
+```bash
+yarn seed
+```
+
+Build (production)
+
+```bash
+yarn build
+yarn start
+```
+
+Troubleshooting
+
+- If you hit Next.js cache/EPERM issues, try removing the `.next` folder and retrying the build:
+
+```powershell
+Remove-Item -LiteralPath .next -Recurse -Force -ErrorAction SilentlyContinue
+yarn build
+```
+
+- If seeds fail with missing media files, the seed process pre-generates demo hero images in `media/hero-images`. Ensure the process has write permissions to the project directory.
+
+Security notes
+
+- `PAYLOAD_SECRET` should be kept secret in production — do not commit `.env`.
+- The seeded accounts are for local/demo use only — change passwords before exposing any instance publicly.
 
 ## How it works
 
@@ -110,7 +231,6 @@ The seed also ensures these users exist:
 - Viewer: `viewer@mail.com` / `test`
 - Editor: `editor@mail.com` / `test`
 - Manager: `manager@mail.com` / `test`
-
 
 Those users are attached to `RBAC Demo Project` as viewer, editor, and manager respectively.
 
