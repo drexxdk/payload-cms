@@ -93,6 +93,168 @@
     display: none !important;
 }
 
+.editorial-context-banner {
+    margin: 0 0 1.25rem;
+    padding: 0 1.5rem;
+}
+
+.admin-surface-switcher {
+    margin: 0 0 1rem;
+    padding: 0 1.5rem;
+}
+
+.admin-surface-switcher__inner {
+    align-items: center;
+    background: linear-gradient(135deg, rgba(226, 231, 219, 0.7), rgba(246, 239, 223, 0.76));
+    border: 1px solid rgba(86, 96, 78, 0.16);
+    border-radius: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+}
+
+.admin-surface-switcher__copy {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.admin-surface-switcher__eyebrow {
+    color: var(--theme-text-dim);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.admin-surface-switcher__description {
+    color: var(--theme-text);
+    margin: 0;
+    opacity: 0.75;
+}
+
+.admin-surface-switcher__nav {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(86, 96, 78, 0.14);
+    border-radius: 999px;
+    display: inline-flex;
+    gap: 0.35rem;
+    padding: 0.25rem;
+}
+
+.admin-surface-switcher__link {
+    border-radius: 999px;
+    color: var(--theme-text);
+    font-weight: 600;
+    padding: 0.55rem 0.95rem;
+    text-decoration: none;
+}
+
+.admin-surface-switcher__link:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.admin-surface-switcher__link--active {
+    background: var(--theme-text);
+    color: var(--theme-base-0);
+}
+
+.editorial-context-banner__inner {
+    background: linear-gradient(135deg, rgba(190, 210, 186, 0.2), rgba(236, 226, 198, 0.34));
+    border: 1px solid rgba(86, 96, 78, 0.18);
+    border-radius: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.5rem;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+}
+
+.editorial-context-banner__breadcrumbs {
+    align-items: center;
+    color: var(--theme-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    line-height: 1.4;
+}
+
+.editorial-context-banner__crumb {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.35rem;
+}
+
+.editorial-context-banner__crumb--current {
+    color: var(--theme-text);
+    font-weight: 600;
+}
+
+.editorial-context-banner__separator {
+    color: var(--theme-text-dim);
+}
+
+.editorial-context-banner__link {
+    color: var(--theme-text);
+    text-decoration: none;
+}
+
+.editorial-context-banner__link:hover,
+.editorial-context-banner__return:hover {
+    text-decoration: underline;
+}
+
+.editorial-context-banner__link--root {
+    font-weight: 700;
+}
+
+.editorial-context-banner__meta {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.editorial-context-banner__note {
+    color: var(--theme-text-dim);
+    font-size: 0.92rem;
+}
+
+.editorial-context-banner__return {
+    color: var(--theme-text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.editorial-locked-field {
+    background: rgba(236, 226, 198, 0.24);
+    border: 1px solid rgba(86, 96, 78, 0.18);
+    border-radius: 14px;
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+}
+
+.editorial-locked-field__label {
+    color: var(--theme-text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.editorial-locked-field__value {
+    color: var(--theme-text);
+    font-weight: 600;
+}
+
+.editorial-locked-field__description {
+    color: var(--theme-text-dim);
+    margin: 0;
+}
+
 @media (max-width: 1440px) {
     /* Hide the nav toggle until Payload finishes nav hydration so it does not flash open-state UI. */
     body:has(.nav:not(.nav--nav-hydrated)) .template-default__nav-toggler-wrapper {
@@ -104,5 +266,23 @@
     .template-default.template-default--nav-hydrated:not(.template-default--nav-open) {
         grid-template-columns: 0 auto !important;
         transition: none !important;
+    }
+
+    .editorial-context-banner {
+        padding: 0 1rem;
+    }
+
+    .admin-surface-switcher {
+        padding: 0 1rem;
+    }
+
+    .editorial-context-banner__inner {
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+    }
+
+    .admin-surface-switcher__inner {
+        border-radius: 14px;
+        padding: 0.8rem 0.95rem;
     }
 }

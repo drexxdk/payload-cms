@@ -3,6 +3,9 @@
 import { useNav } from '@payloadcms/ui'
 import { useLayoutEffect } from 'react'
 
+import AdminSurfaceSwitcher from './AdminSurfaceSwitcher'
+import EditorialContextBanner from './editorial/EditorialContextBanner'
+
 const desktopNavBreakpoint = '(max-width: 1440px)'
 
 export default function AdminNavBootstrap({ children }: { children?: React.ReactNode }) {
@@ -17,5 +20,11 @@ export default function AdminNavBootstrap({ children }: { children?: React.React
     }
   }, [setNavOpen])
 
-  return children
+  return (
+    <>
+      <AdminSurfaceSwitcher />
+      <EditorialContextBanner />
+      {children}
+    </>
+  )
 }

@@ -59,34 +59,34 @@ type DashboardCollection =
 
 const dashboardCopy = {
   adminOverview: {
-    da: 'Admin-overblik',
-    de: 'Admin-Ueberblick',
-    en: 'Admin overview',
-    fr: "Vue d'ensemble admin",
+    da: 'Administrationsflade',
+    de: 'Administrationsoberflaeche',
+    en: 'Administration surface',
+    fr: "Surface d'administration",
   },
   heroDescription: {
-    da: 'Dette dashboard fokuserer foerst paa strukturen: hvilket indhold der findes, hvordan de vigtigste samlinger haenger sammen, og hvor der stadig mangler data.',
-    de: 'Dieses Dashboard fokussiert zuerst auf die Struktur: welche Inhalte vorhanden sind, wie die wichtigsten Sammlungen zusammenhaengen und wo noch Daten fehlen.',
-    en: 'This dashboard focuses on structure first: what content exists, how the main collections relate, and where data is still missing.',
-    fr: "Ce tableau de bord privilegie d'abord la structure : quels contenus existent, comment les collections principales sont reliees et ou il manque encore des donnees.",
+    da: 'Denne flade er til vedligeholdelsesarbejde: adgang, strukturkontrol, relationstjek og undtagelsesflows, som ikke boer vaere en del af den almindelige redaktionelle navigation.',
+    de: 'Diese Oberflaeche ist fuer Wartungsarbeit gedacht: Zugriff, Strukturpruefung, Relationskontrolle und Ausnahmefaelle, die nicht Teil der normalen redaktionellen Navigation sein sollen.',
+    en: 'This surface is for maintenance work: access, structure review, relation health, and exception flows that should not sit inside the normal editorial navigation.',
+    fr: "Cette surface est reservee au travail de maintenance : acces, controle de structure, sante des relations et flux d'exception qui ne doivent pas vivre dans la navigation editoriale normale.",
   },
   heroTitle: {
-    da: 'Se hele indholdsmodellen paa et oejekast.',
-    de: 'Sieh das gesamte Inhaltsmodell auf einen Blick.',
-    en: 'See the whole content model at a glance.',
-    fr: "Voir l'ensemble du modele de contenu en un coup d'oeil.",
+    da: 'Vedligehold strukturen uden at forstyrre det redaktionelle trae.',
+    de: 'Pflege die Struktur, ohne den redaktionellen Baum zu stoeren.',
+    en: 'Maintain the structure without disturbing the editorial tree.',
+    fr: "Maintenir la structure sans perturber l'arborescence editoriale.",
   },
   quickActionsDescription: {
-    da: 'Gaa direkte til de mest almindelige oprettelses- og gennemgangsflows uden foerst at aabne hele samlingslister.',
-    de: 'Wechsle direkt zwischen den haeufigsten Erstellungs- und Pruefablaufen, ohne zuerst komplette Listen zu oeffnen.',
-    en: 'Move between the most common create and review flows without opening full collection lists first.',
-    fr: "Passe entre les flux de creation et de revue les plus frequents sans ouvrir d'abord les listes completes.",
+    da: 'Brug denne kolonne til vedligeholdelsesarbejde. Almindelig indholdsoprettelse boer starte i Editorial workspace.',
+    de: 'Nutze diese Spalte fuer Wartungsarbeit. Gewoehnliche Inhaltserstellung sollte im Editorial Workspace beginnen.',
+    en: 'Use this column for maintenance work. Normal content creation should start in the editorial workspace.',
+    fr: "Utilisez cette colonne pour le travail de maintenance. La creation de contenu normale doit commencer dans l'espace editorial.",
   },
   quickActionsTitle: {
-    da: 'Hurtige handlinger',
-    de: 'Schnellaktionen',
-    en: 'Quick actions',
-    fr: 'Actions rapides',
+    da: 'Vedligeholdelseshandlinger',
+    de: 'Wartungsaktionen',
+    en: 'Maintenance actions',
+    fr: 'Actions de maintenance',
   },
   editorialInsightsDescription: {
     da: 'Et hurtigt redaktionelt overblik over hvad der er publiceret, hvad der stadig er kladde, og hvad der er blevet opdateret for nylig.',
@@ -894,48 +894,18 @@ export default async function AdminDashboard(props: AdminViewServerProps) {
   const quickActions: QuickAction[] = [
     {
       label: translate(i18n, {
-        da: 'Opret projekt',
-        de: 'Projekt erstellen',
-        en: 'Create project',
-        fr: 'Creer un projet',
+        da: 'Aabn editorial workspace',
+        de: 'Editorial Workspace oeffnen',
+        en: 'Open editorial workspace',
+        fr: "Ouvrir l'espace editorial",
       }),
       description: translate(i18n, {
-        da: 'Start et nyt arbejdsomraade paa oeverste niveau foer du tilfoejer adgang, grupper og kurser.',
-        de: 'Starte einen neuen obersten Arbeitsbereich, bevor Zugriff, Gruppen und Kurse hinzugefuegt werden.',
-        en: 'Start a new top-level workspace before adding access, groups, and courses.',
-        fr: "Demarrer un nouvel espace de travail principal avant d'ajouter les acces, groupes et cours.",
+        da: 'Gaa ind i den hierarkiske redaktionelle navigation med projekter som startpunkt.',
+        de: 'Wechsle in die hierarchische redaktionelle Navigation mit Projekten als Einstiegspunkt.',
+        en: 'Enter the hierarchical editorial navigation with projects as the starting point.',
+        fr: 'Entrer dans la navigation editoriale hierarchique en commencant par les projets.',
       }),
-      href: dashboardLink('/collections/projects/create'),
-    },
-    {
-      label: translate(i18n, {
-        da: 'Opret kursus',
-        de: 'Kurs erstellen',
-        en: 'Create course',
-        fr: 'Creer un cours',
-      }),
-      description: translate(i18n, {
-        da: 'Tilfoej en leverbar laeringsstruktur i et eksisterende projekt.',
-        de: 'Eine auslieferbare Lernstruktur innerhalb eines bestehenden Projekts anlegen.',
-        en: 'Add a deliverable learning structure inside an existing project.',
-        fr: "Ajouter une structure d'apprentissage exploitable dans un projet existant.",
-      }),
-      href: dashboardLink('/collections/courses/create'),
-    },
-    {
-      label: translate(i18n, {
-        da: 'Opret produkt',
-        de: 'Produkt erstellen',
-        en: 'Create product',
-        fr: 'Creer un produit',
-      }),
-      description: translate(i18n, {
-        da: 'Tilfoej genbrugeligt katalogindhold, der kan grupperes og kobles ind i kurser.',
-        de: 'Wiederverwendbare Kataloginhalte anlegen, die gruppiert und in Kurse eingebunden werden koennen.',
-        en: 'Add reusable catalog content that can be grouped and linked into courses.',
-        fr: 'Ajouter un contenu catalogue reutilisable pouvant etre groupe et relie a des cours.',
-      }),
-      href: dashboardLink('/collections/products/create'),
+      href: dashboardLink('/editorial'),
     },
     {
       label: translate(i18n, {

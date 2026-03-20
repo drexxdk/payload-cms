@@ -133,6 +133,9 @@ export const CoursePages: CollectionConfig = {
       relationTo: 'course-chapters',
       required: true,
       admin: {
+        components: {
+          Field: '/components/admin/fields/ContextLockedRelationshipField',
+        },
         description: {
           en: 'Which chapter this page belongs to.',
           da: 'Hvilket kapitel denne side hoerer til.',

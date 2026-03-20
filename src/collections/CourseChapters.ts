@@ -112,6 +112,9 @@ export const CourseChapters: CollectionConfig = {
       relationTo: 'courses',
       required: true,
       admin: {
+        components: {
+          Field: '/components/admin/fields/ContextLockedRelationshipField',
+        },
         description: {
           en: 'Which course frontpage this chapter belongs to.',
           da: 'Hvilken kursusforside dette kapitel hoerer til.',

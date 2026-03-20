@@ -160,6 +160,9 @@ export const CourseContent: CollectionConfig = {
       relationTo: 'projects',
       required: true,
       admin: {
+        components: {
+          Field: '/components/admin/fields/ContextLockedRelationshipField',
+        },
         description: {
           en: 'Which project owns this reusable content item.',
           da: 'Hvilket projekt der ejer dette genbrugelige indholdselement.',

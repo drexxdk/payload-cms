@@ -58,6 +58,9 @@ export const ProjectGroups: CollectionConfig = {
       relationTo: 'projects',
       required: true,
       admin: {
+        components: {
+          Field: '/components/admin/fields/ContextLockedRelationshipField',
+        },
         description: {
           en: 'Parent project for this group',
           da: 'Overordnet projekt for denne gruppe',
