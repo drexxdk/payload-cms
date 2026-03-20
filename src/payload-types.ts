@@ -75,6 +75,9 @@ export interface Config {
     projects: Project;
     'project-groups': ProjectGroup;
     courses: Course;
+    'course-chapters': CourseChapter;
+    'course-pages': CoursePage;
+    'course-content': CourseContent;
     palettes: Palette;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -101,7 +104,11 @@ export interface Config {
       courses: 'courses';
     };
     courses: {
+      chapters: 'course-chapters';
       products: 'products';
+    };
+    'course-chapters': {
+      pages: 'course-pages';
     };
   };
   collectionsSelect: {
@@ -113,6 +120,9 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'project-groups': ProjectGroupsSelect<false> | ProjectGroupsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
+    'course-chapters': CourseChaptersSelect<false> | CourseChaptersSelect<true>;
+    'course-pages': CoursePagesSelect<false> | CoursePagesSelect<true>;
+    'course-content': CourseContentSelect<false> | CourseContentSelect<true>;
     palettes: PalettesSelect<false> | PalettesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -348,18 +358,49 @@ export interface ProductType {
   createdAt: string;
 }
 /**
- * Project-scoped course records linked to the products they use.
+ * Project-scoped course frontpages with reusable chapter and product associations.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "courses".
  */
 export interface Course {
   id: number;
+  /**
+   * Hero image for the course frontpage. Select from the media library or upload a new scoped image asset.
+   */
+  hero: number | Media;
   title: string;
+  isbn?: string | null;
+  /**
+   * Optional localized introduction for the course frontpage.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Which project this course belongs to
    */
   project: number | Project;
+  /**
+   * Chapters that belong to this course frontpage.
+   */
+  chapters?: {
+    docs?: (number | CourseChapter)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   products?: {
     docs?: (number | Product)[];
     hasNextPage?: boolean;
@@ -381,6 +422,26 @@ export interface Media {
    */
   kind: 'image' | 'video' | 'geogebra' | 'thinglink' | 'download' | 'other';
   /**
+   * Choose the narrowest level where this file should be available in the media library.
+   */
+  availabilityScope: 'project' | 'projectGroup' | 'product' | 'course';
+  /**
+   * Top-level project ownership for this file.
+   */
+  project: number | Project;
+  /**
+   * Limit this file to a specific product group within the chosen project.
+   */
+  projectGroup?: (number | null) | ProjectGroup;
+  /**
+   * Limit this file to a specific product.
+   */
+  product?: (number | null) | Product;
+  /**
+   * Limit this file to a specific course inside the chosen project.
+   */
+  course?: (number | null) | Course;
+  /**
    * Accessibility text for visual media. Keep this populated for images and previews.
    */
   alt: string;
@@ -395,6 +456,192 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * Structured chapters that live inside a course frontpage and group reusable pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-chapters".
+ */
+export interface CourseChapter {
+  id: number;
+  /**
+   * Hero image for this chapter. Select from the media library or upload a new scoped image asset.
+   */
+  hero: number | Media;
+  title: string;
+  /**
+   * Optional localized overview for the chapter.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Which course frontpage this chapter belongs to.
+   */
+  course: number | Course;
+  /**
+   * Pages collected under this chapter.
+   */
+  pages?: {
+    docs?: (number | CoursePage)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Localized course pages that belong to chapters and assemble reusable content items in order.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-pages".
+ */
+export interface CoursePage {
+  id: number;
+  /**
+   * Optional hero image for this page. Select from the media library or upload a new scoped image asset.
+   */
+  hero?: (number | null) | Media;
+  title: string;
+  /**
+   * Optional localized introduction for this page.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Which chapter this page belongs to.
+   */
+  chapter: number | CourseChapter;
+  /**
+   * Ordered reusable content items for this page. The same item cannot be added twice to one page.
+   */
+  contentItems?:
+    | {
+        /**
+         * Select a reusable content item to place on this page.
+         */
+        content: number | CourseContent;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Reusable content items that can be placed on many course pages without duplicating the source content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-content".
+ */
+export interface CourseContent {
+  id: number;
+  title: string;
+  /**
+   * Choose the content kind first. The form will then show only the fields relevant to that kind.
+   */
+  contentType: 'richText' | 'quote' | 'image' | 'assignment' | 'question';
+  /**
+   * Optional summary shown when the content item needs a short introduction.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Which project owns this reusable content item.
+   */
+  project: number | Project;
+  /**
+   * Main rich text body for a rich text content item.
+   */
+  richTextBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Select an image from the media library or upload a new scoped image asset for this project.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Optional caption or explanatory text for the image.
+   */
+  imageCaption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The quoted text to display.
+   */
+  quoteText?: string | null;
+  /**
+   * Optional source, speaker, or author for the quote.
+   */
+  quoteAttribution?: string | null;
+  /**
+   * Add the questions that belong to this assignment. Their order defines question 1 of N, 2 of N, and so on.
+   */
+  assignmentQuestions?: (number | CourseContent)[] | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Reusable palette definitions used by custom UI and branded content assets.
@@ -471,6 +718,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'courses';
         value: number | Course;
+      } | null)
+    | ({
+        relationTo: 'course-chapters';
+        value: number | CourseChapter;
+      } | null)
+    | ({
+        relationTo: 'course-pages';
+        value: number | CoursePage;
+      } | null)
+    | ({
+        relationTo: 'course-content';
+        value: number | CourseContent;
       } | null)
     | ({
         relationTo: 'palettes';
@@ -550,6 +809,11 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   kind?: T;
+  availabilityScope?: T;
+  project?: T;
+  projectGroup?: T;
+  product?: T;
+  course?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -635,9 +899,62 @@ export interface ProjectGroupsSelect<T extends boolean = true> {
  * via the `definition` "courses_select".
  */
 export interface CoursesSelect<T extends boolean = true> {
+  hero?: T;
   title?: T;
+  isbn?: T;
+  description?: T;
   project?: T;
+  chapters?: T;
   products?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-chapters_select".
+ */
+export interface CourseChaptersSelect<T extends boolean = true> {
+  hero?: T;
+  title?: T;
+  description?: T;
+  course?: T;
+  pages?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-pages_select".
+ */
+export interface CoursePagesSelect<T extends boolean = true> {
+  hero?: T;
+  title?: T;
+  description?: T;
+  chapter?: T;
+  contentItems?:
+    | T
+    | {
+        content?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-content_select".
+ */
+export interface CourseContentSelect<T extends boolean = true> {
+  title?: T;
+  contentType?: T;
+  description?: T;
+  project?: T;
+  richTextBody?: T;
+  image?: T;
+  imageCaption?: T;
+  quoteText?: T;
+  quoteAttribution?: T;
+  assignmentQuestions?: T;
   updatedAt?: T;
   createdAt?: T;
 }

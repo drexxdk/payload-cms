@@ -17,6 +17,9 @@ import { ProductTypes } from './collections/ProductTypes'
 import { Products } from './collections/Products'
 import { ProjectGroups } from './collections/ProjectGroups'
 import { Courses } from './collections/Courses'
+import { CourseChapters } from './collections/CourseChapters'
+import { CoursePages } from './collections/CoursePages'
+import { CourseContent } from './collections/CourseContent'
 import { Palettes } from './collections/Palettes'
 
 const filename = fileURLToPath(import.meta.url)
@@ -76,6 +79,9 @@ export default buildConfig({
     Projects,
     ProjectGroups,
     Courses,
+    CourseChapters,
+    CoursePages,
+    CourseContent,
     Palettes,
   ],
   editor,

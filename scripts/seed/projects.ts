@@ -1,5 +1,13 @@
+import path from 'path'
 import type { Payload } from 'payload'
+import { COURSE_SEED_DATA } from './course-data'
 import { DEMO_PASSWORD, DEMO_PROJECT, DEMO_USERS } from './demo'
+
+const DEMO_COURSE_HERO_FILE = path.resolve(
+  process.cwd(),
+  'media',
+  'Screenshot_20241017_110011_Outlook.jpg',
+)
 
 type SeedProjectDefinition = {
   title: string
@@ -91,14 +99,14 @@ async function ensureProjectType(payload: Payload) {
   return existing.docs[0] ?? null
 }
 
-async function ensureCourse(payload: Payload, projectID: number) {
+async function ensureCourseHero(payload: Payload, projectID: number, courseTitle: string) {
   const existing = await payload.find({
-    collection: 'courses',
+    collection: 'media',
     where: {
       and: [
         {
-          title: {
-            equals: DEMO_PROJECT.courseTitle,
+          alt: {
+            equals: `${courseTitle} hero image`,
           },
         },
         {
@@ -117,9 +125,62 @@ async function ensureCourse(payload: Payload, projectID: number) {
   }
 
   return payload.create({
+    collection: 'media',
+    data: {
+      alt: `${courseTitle} hero image`,
+      availabilityScope: 'project',
+      kind: 'image',
+      project: projectID,
+    },
+    depth: 0,
+    filePath: DEMO_COURSE_HERO_FILE,
+  })
+}
+
+async function ensureCourse(
+  payload: Payload,
+  projectID: number,
+  heroID: number,
+  courseTitle: string,
+) {
+  const existing = await payload.find({
+    collection: 'courses',
+    where: {
+      and: [
+        {
+          title: {
+            equals: courseTitle,
+          },
+        },
+        {
+          project: {
+            equals: projectID,
+          },
+        },
+      ],
+    },
+    depth: 0,
+    limit: 1,
+  })
+
+  if (existing.docs[0]) {
+    return payload.update({
+      collection: 'courses',
+      id: existing.docs[0].id,
+      data: {
+        hero: heroID,
+        project: projectID,
+        title: courseTitle,
+      },
+      depth: 0,
+    })
+  }
+
+  return payload.create({
     collection: 'courses',
     data: {
-      title: DEMO_PROJECT.courseTitle,
+      hero: heroID,
+      title: courseTitle,
       project: projectID,
     },
     depth: 0,
@@ -265,9 +326,15 @@ export async function seedProjects(payload: Payload) {
     throw new Error('Failed to ensure the base demo project')
   }
 
-  const course = await ensureCourse(payload, projectID)
   const group = await ensureGroup(payload, projectID)
 
+  for (const courseDefinition of COURSE_SEED_DATA) {
+    const courseHero = await ensureCourseHero(payload, projectID, courseDefinition.title)
+    const course = await ensureCourse(payload, projectID, courseHero.id, courseDefinition.title)
+
+    console.log('Ensured demo course hero media:', courseHero.id, courseDefinition.title)
+    console.log('Ensured demo project course:', course.id, courseDefinition.title)
+  }
+
   console.log('Ensured demo project group:', group.id)
-  console.log('Ensured demo project course:', course.id)
 }

@@ -112,6 +112,42 @@ export async function canEditProjectByID(
   )
 }
 
+export async function canEditCourseByID(
+  req: PayloadRequest,
+  courseID: number | null,
+): Promise<boolean> {
+  if (isSuperAdmin(req.user)) return true
+  if (!req.user || courseID === null) return false
+
+  const course = await req.payload.findByID({
+    collection: 'courses',
+    id: courseID,
+    depth: 0,
+    overrideAccess: false,
+    req,
+  })
+
+  return canEditProjectByID(req, relationshipID(course.project))
+}
+
+export async function canEditCourseChapterByID(
+  req: PayloadRequest,
+  chapterID: number | null,
+): Promise<boolean> {
+  if (isSuperAdmin(req.user)) return true
+  if (!req.user || chapterID === null) return false
+
+  const chapter = await req.payload.findByID({
+    collection: 'course-chapters',
+    id: chapterID,
+    depth: 0,
+    overrideAccess: false,
+    req,
+  })
+
+  return canEditCourseByID(req, relationshipID(chapter.course))
+}
+
 export function relationshipID(value: unknown): number | null {
   if (typeof value === 'number') return value
   if (typeof value !== 'object' || value === null) return null
