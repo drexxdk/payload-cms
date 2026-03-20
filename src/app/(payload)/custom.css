@@ -99,14 +99,24 @@
 }
 
 .admin-surface-switcher {
+    --admin-surface-panel-start: color-mix(in srgb, var(--theme-elevation-100) 84%, var(--theme-success-500) 16%);
+    --admin-surface-panel-end: color-mix(in srgb, var(--theme-elevation-50) 86%, var(--theme-warning-500) 14%);
+    --admin-surface-panel-border: color-mix(in srgb, var(--theme-elevation-300) 72%, var(--theme-success-500) 28%);
+    --admin-surface-pill-bg: color-mix(in srgb, var(--theme-elevation-0) 90%, var(--theme-elevation-1000) 10%);
+    --admin-surface-pill-border: color-mix(in srgb, var(--theme-elevation-250) 82%, var(--theme-elevation-1000) 18%);
+    --admin-surface-pill-hover: color-mix(in srgb, var(--theme-elevation-150) 84%, var(--theme-success-500) 16%);
+    --admin-surface-active-bg: var(--theme-elevation-900);
+    --admin-surface-active-text: var(--theme-elevation-0);
+    --admin-surface-muted-text: color-mix(in srgb, var(--theme-text) 72%, transparent);
     margin: 0 0 1rem;
     padding: 0 1.5rem;
 }
 
 .admin-surface-switcher__inner {
     align-items: center;
-    background: linear-gradient(135deg, rgba(226, 231, 219, 0.7), rgba(246, 239, 223, 0.76));
-    border: 1px solid rgba(86, 96, 78, 0.16);
+    background: var(--admin-surface-panel-start);
+    background-image: linear-gradient(135deg, var(--admin-surface-panel-start), var(--admin-surface-panel-end));
+    border: 1px solid var(--admin-surface-panel-border);
     border-radius: 18px;
     display: flex;
     flex-wrap: wrap;
@@ -121,7 +131,7 @@
 }
 
 .admin-surface-switcher__eyebrow {
-    color: var(--theme-text-dim);
+    color: var(--admin-surface-muted-text);
     font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -131,13 +141,14 @@
 .admin-surface-switcher__description {
     color: var(--theme-text);
     margin: 0;
-    opacity: 0.75;
+    opacity: 0.92;
 }
 
 .admin-surface-switcher__nav {
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(86, 96, 78, 0.14);
+    background: var(--admin-surface-pill-bg);
+    border: 1px solid var(--admin-surface-pill-border);
     border-radius: 999px;
+    box-shadow: 0 10px 24px -18px color-mix(in srgb, var(--theme-elevation-1000) 55%, transparent);
     display: inline-flex;
     gap: 0.35rem;
     padding: 0.25rem;
@@ -149,15 +160,16 @@
     font-weight: 600;
     padding: 0.55rem 0.95rem;
     text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .admin-surface-switcher__link:hover {
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--admin-surface-pill-hover);
 }
 
 .admin-surface-switcher__link--active {
-    background: var(--theme-text);
-    color: var(--theme-base-0);
+    background: var(--admin-surface-active-bg);
+    color: var(--admin-surface-active-text);
 }
 
 .editorial-context-banner__inner {

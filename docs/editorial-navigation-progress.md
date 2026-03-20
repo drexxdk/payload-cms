@@ -111,6 +111,8 @@ Completed so far:
 18. Added focused Playwright coverage for the administration surface switcher and the contextual editorial create-form chrome.
 19. Added broader Playwright regression coverage for editorial home, a canonical deep chapter route, and editorial not-found handling.
 20. Cleared editorial route lint warnings and verified both repository lint and production build pass.
+21. Fixed the surface switcher contrast so it now follows Payload theme tokens and remains readable in dark mode.
+22. Fixed duplicate editorial action keys by giving same-screen maintenance actions distinct intent URLs instead of reusing identical hrefs.
 
 ## Latest Notes
 
@@ -125,6 +127,8 @@ Completed so far:
 9. The admin e2e spec now also covers editorial home, seeded deep-route breadcrumbs, direct-child chapter pages, and editorial not-found handling.
 10. The next pass is repository-level verification with lint and production build checks.
 11. Repository lint and production build both pass after removing unused editorial route imports.
+12. The surface switcher now uses theme-aware styling instead of fixed light colors, so it stays readable in both dark and light modes.
+13. Same-screen maintenance actions now carry distinct editorial intent params, so React keys and URLs stay stable even when multiple actions land on the same raw document screen.
 
 ## Update Log
 
@@ -146,3 +150,7 @@ Completed so far:
 14. Completed the broader editorial route regression pass with 8 passing admin e2e tests.
 15. Started a repository verification pass for lint and production build health.
 16. Completed the repository verification pass with clean lint and a successful production build.
+17. Started a surface switcher theme-alignment pass after identifying low-contrast text in the current styling.
+18. Completed the surface switcher theme-alignment pass with improved contrast and theme-aware styling.
+19. Started a duplicate-key bugfix pass after hitting a React warning on the project group editorial route.
+20. Completed the duplicate-key bugfix by separating shared raw-route actions with explicit editorial intent query params.

@@ -140,6 +140,7 @@ export function projectGroupManageProductsHref(projectID: number, groupID: numbe
     `/admin/collections/project-groups/${groupID}`,
     projectGroupHref(projectID, groupID),
     {
+      editorialAction: 'manage-products',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
     },
@@ -151,6 +152,7 @@ export function projectGroupEditHref(projectID: number, groupID: number) {
     `/admin/collections/project-groups/${groupID}`,
     projectGroupHref(projectID, groupID),
     {
+      editorialAction: 'edit-group',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
     },
@@ -162,6 +164,7 @@ export function productManageCoursesHref(projectID: number, groupID: number, pro
     `/admin/collections/products/${productID}`,
     productHref(projectID, groupID, productID),
     {
+      editorialAction: 'manage-courses',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
       editorialProductId: productID,
@@ -174,6 +177,7 @@ export function productEditHref(projectID: number, groupID: number, productID: n
     `/admin/collections/products/${productID}`,
     productHref(projectID, groupID, productID),
     {
+      editorialAction: 'edit-product',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
       editorialProductId: productID,
@@ -269,6 +273,7 @@ export function pageManageContentHref(
     `/admin/collections/course-pages/${pageID}`,
     pageHref(projectID, groupID, productID, courseID, chapterID, pageID),
     {
+      editorialAction: 'manage-content',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
       editorialProductId: productID,
@@ -291,6 +296,7 @@ export function pageEditHref(
     `/admin/collections/course-pages/${pageID}`,
     pageHref(projectID, groupID, productID, courseID, chapterID, pageID),
     {
+      editorialAction: 'edit-page',
       editorialProjectId: projectID,
       editorialGroupId: groupID,
       editorialProductId: productID,

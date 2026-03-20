@@ -9,6 +9,7 @@ export type EditorialCrumb = {
 
 export type EditorialAction = {
   href: string
+  key?: string
   label: string
   secondary?: boolean
 }
@@ -16,6 +17,7 @@ export type EditorialAction = {
 export type EditorialListItem = {
   description?: string
   href: string
+  key?: string
   meta?: string[]
   title: string
 }
@@ -107,9 +109,9 @@ export function EditorialPage({
             ) : null}
             {meta.length > 0 ? (
               <div className="mt-4 flex flex-wrap gap-2">
-                {meta.map((item) => (
+                {meta.map((item, index) => (
                   <span
-                    key={item}
+                    key={`${item}-${index}`}
                     className="rounded-full border border-(--theme-elevation-150) bg-(--theme-elevation-50) px-3 py-1 text-sm opacity-85"
                   >
                     {item}
@@ -121,13 +123,13 @@ export function EditorialPage({
 
           {actions.length > 0 ? (
             <div className="flex flex-wrap gap-3 lg:justify-end">
-              {actions.map((action) => (
+              {actions.map((action, index) => (
                 <Link
-                  key={action.href}
+                  key={action.key ?? `${action.label}-${action.href}-${index}`}
                   className={
                     action.secondary
                       ? 'rounded-full border border-(--theme-elevation-150) px-4 py-2 text-sm font-medium transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)'
-                      : 'rounded-full bg-(--theme-text) px-4 py-2 text-sm font-medium text-(--theme-base-0) transition hover:opacity-85'
+                      : 'rounded-full bg-(--admin-surface-active-bg) px-4 py-2 text-sm font-medium text-(--admin-surface-active-text) transition hover:opacity-85'
                   }
                   href={action.href}
                 >
@@ -181,9 +183,9 @@ export function EditorialList({
 
   return (
     <div className="grid gap-3">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <Link
-          key={item.href}
+          key={item.key ?? `${item.title}-${item.href}-${index}`}
           className="rounded-3xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) px-5 py-4 transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)"
           href={item.href}
         >
@@ -198,9 +200,9 @@ export function EditorialList({
             </div>
             {item.meta && item.meta.length > 0 ? (
               <div className="flex flex-wrap gap-2 lg:max-w-xs lg:justify-end">
-                {item.meta.map((entry) => (
+                {item.meta.map((entry, metaIndex) => (
                   <span
-                    key={entry}
+                    key={`${entry}-${metaIndex}`}
                     className="rounded-full border border-(--theme-elevation-150) bg-(--theme-elevation-50) px-3 py-1 text-xs font-medium uppercase tracking-[0.12em] opacity-80"
                   >
                     {entry}
