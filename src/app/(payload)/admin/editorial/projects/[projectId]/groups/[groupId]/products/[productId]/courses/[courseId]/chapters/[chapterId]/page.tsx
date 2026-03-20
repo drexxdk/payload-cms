@@ -8,7 +8,6 @@ import {
 } from '@/components/admin/editorial/EditorialChrome'
 import {
   chapterEditHref,
-  chapterHref,
   editorialHref,
   formatDate,
   loadChapterOverview,

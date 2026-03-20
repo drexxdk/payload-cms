@@ -15,7 +15,6 @@ import {
   loadPageOverview,
   pageEditHref,
   pageManageContentHref,
-  pageHref,
   productHref,
   projectGroupHref,
   projectHref,

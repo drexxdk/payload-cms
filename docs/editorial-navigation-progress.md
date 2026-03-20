@@ -110,6 +110,7 @@ Completed so far:
 17. Re-validated the cleanup pass with `yarn tsc --noEmit` and a browser check on `/admin`.
 18. Added focused Playwright coverage for the administration surface switcher and the contextual editorial create-form chrome.
 19. Added broader Playwright regression coverage for editorial home, a canonical deep chapter route, and editorial not-found handling.
+20. Cleared editorial route lint warnings and verified both repository lint and production build pass.
 
 ## Latest Notes
 
@@ -122,6 +123,8 @@ Completed so far:
 7. The administration surface now points normal content creation back into the editorial tree instead of advertising flat create routes.
 8. The admin e2e spec now checks the surface switcher, maintenance-only dashboard actions, editorial context banner, and locked parent field behavior.
 9. The admin e2e spec now also covers editorial home, seeded deep-route breadcrumbs, direct-child chapter pages, and editorial not-found handling.
+10. The next pass is repository-level verification with lint and production build checks.
+11. Repository lint and production build both pass after removing unused editorial route imports.
 
 ## Update Log
 
@@ -141,3 +144,5 @@ Completed so far:
 12. Completed the targeted admin e2e coverage and verified the spec passes locally.
 13. Started a broader editorial route regression pass to cover the canonical tree itself.
 14. Completed the broader editorial route regression pass with 8 passing admin e2e tests.
+15. Started a repository verification pass for lint and production build health.
+16. Completed the repository verification pass with clean lint and a successful production build.

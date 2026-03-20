@@ -11,7 +11,6 @@ import {
   editorialHref,
   productEditHref,
   productManageCoursesHref,
-  productHref,
   projectGroupHref,
   projectHref,
   loadProductOverview,

@@ -4,7 +4,6 @@ import { EditorialInfoGrid, EditorialPage } from '@/components/admin/editorial/E
 import {
   chapterHref,
   contentEditHref,
-  contentHref,
   courseHref,
   editorialHref,
   formatDate,
