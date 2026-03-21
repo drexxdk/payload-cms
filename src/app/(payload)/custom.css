@@ -231,6 +231,3 @@ body:not(.editorial-course-route-active) .template-default__nav-toggler-wrapper 
 .template-default.template-default--nav-animate:has(.nav.nav--nav-hydrated:not(.nav--nav-open)) {
     transition: none !important;
 }
-
-@media (max-width: 1440px) {
-}

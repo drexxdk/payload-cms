@@ -8,7 +8,7 @@ import * as qs from 'qs-esm'
 import React from 'react'
 
 import { DefaultTemplate, MinimalTemplate } from '@payloadcms/next/templates'
-import type { CollectionPreferences, Payload, SanitizedConfig } from 'payload'
+import type { CollectionPreferences, Payload, SanitizedConfig, CollectionSlug } from 'payload'
 import { getPreferences } from '../../../node_modules/@payloadcms/next/dist/utilities/getPreferences.js'
 import { handleAuthRedirect } from '../../../node_modules/@payloadcms/next/dist/utilities/handleAuthRedirect.js'
 import { initReq } from '../../../node_modules/@payloadcms/next/dist/utilities/initReq.js'
@@ -150,16 +150,16 @@ export default async function AdminRootPage({
 
   if (collectionConfig && req.user && segments.length === 2) {
     if (config.folders && collectionConfig.folders && segments[1] !== config.folders.slug) {
-      await getPreferences(
+      const prefResult = await getPreferences(
         `collection-${collectionConfig.slug}`,
         req.payload,
         req.user.id,
         config.admin.user,
-      ).then((result: { value?: CollectionPreferences } | null) => {
-        if (result?.value) {
-          collectionPreferences = result.value
-        }
-      })
+      )
+
+      if (prefResult?.value) {
+        collectionPreferences = prefResult.value as CollectionPreferences
+      }
     }
   }
 
@@ -189,7 +189,7 @@ export default async function AdminRootPage({
     req.user ||
     (await req.payload.db
       .findOne({
-        collection: userSlug,
+        collection: userSlug as CollectionSlug,
         req,
       })
       ?.then((doc: unknown) => Boolean(doc)))

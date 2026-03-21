@@ -8,7 +8,6 @@ import { isCourseRoute } from '@/lib/admin/courseRoute'
 
 import { AdminSurfaceProvider } from './AdminSurfaceContext'
 import CourseNavPortal from './CourseNavPortal'
-import EditorialContextBanner from './editorial/EditorialContextBanner'
 
 export default function AdminNavBootstrap({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname()
@@ -34,7 +33,6 @@ export default function AdminNavBootstrap({ children }: { children?: React.React
 
   return (
     <AdminSurfaceProvider>
-      <EditorialContextBanner />
       {courseRouteActive && navOpen ? <CourseNavPortal /> : null}
       {children}
     </AdminSurfaceProvider>
