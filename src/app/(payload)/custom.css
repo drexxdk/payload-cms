@@ -98,203 +98,139 @@
     padding: 0 1.5rem;
 }
 
-.admin-surface-switcher {
-    --admin-surface-panel-start: color-mix(in srgb, var(--theme-elevation-100) 84%, var(--theme-success-500) 16%);
-    --admin-surface-panel-end: color-mix(in srgb, var(--theme-elevation-50) 86%, var(--theme-warning-500) 14%);
-    --admin-surface-panel-border: color-mix(in srgb, var(--theme-elevation-300) 72%, var(--theme-success-500) 28%);
-    --admin-surface-pill-bg: color-mix(in srgb, var(--theme-elevation-0) 90%, var(--theme-elevation-1000) 10%);
-    --admin-surface-pill-border: color-mix(in srgb, var(--theme-elevation-250) 82%, var(--theme-elevation-1000) 18%);
-    --admin-surface-pill-hover: color-mix(in srgb, var(--theme-elevation-150) 84%, var(--theme-success-500) 16%);
-    --admin-surface-active-bg: var(--theme-elevation-900);
-    --admin-surface-active-text: var(--theme-elevation-0);
-    --admin-surface-muted-text: color-mix(in srgb, var(--theme-text) 72%, transparent);
-    margin: 0 0 1rem;
-    padding: 0 1.5rem;
+.app-header {
+    --admin-shell-max-width: 80rem;
+    --admin-shell-inline-offset: max(1.5rem, calc((100% - var(--admin-shell-max-width)) / 2));
+    background: color-mix(in srgb, var(--theme-elevation-0) 96%, transparent);
+    border-bottom: 1px solid var(--theme-elevation-150);
+    position: sticky !important;
+    top: 0;
+    z-index: calc(var(--z-modal) + 2);
 }
 
-.admin-surface-switcher__inner {
-    align-items: center;
-    background: var(--admin-surface-panel-start);
-    background-image: linear-gradient(135deg, var(--admin-surface-panel-start), var(--admin-surface-panel-end));
-    border: 1px solid var(--admin-surface-panel-border);
-    border-radius: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 1.25rem;
-    justify-content: space-between;
-    padding: 0.85rem 1rem;
+.app-header__bg {
+    background: color-mix(in srgb, var(--theme-elevation-0) 94%, var(--theme-elevation-100) 6%);
+    opacity: 1 !important;
 }
 
-.admin-surface-switcher__copy {
-    display: grid;
-    gap: 0.15rem;
+.app-header__content {
+    background: color-mix(in srgb, var(--theme-elevation-0) 96%, transparent);
+    backdrop-filter: blur(12px);
+    padding-inline: var(--admin-shell-inline-offset);
 }
 
-.admin-surface-switcher__eyebrow {
-    color: var(--admin-surface-muted-text);
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-}
-
-.admin-surface-switcher__description {
-    color: var(--theme-text);
+.app-header__controls-wrapper {
+    box-sizing: border-box;
     margin: 0;
-    opacity: 0.92;
+    max-width: none;
+    width: 100%;
 }
 
-.admin-surface-switcher__nav {
-    background: var(--admin-surface-pill-bg);
-    border: 1px solid var(--admin-surface-pill-border);
-    border-radius: 999px;
-    box-shadow: 0 10px 24px -18px color-mix(in srgb, var(--theme-elevation-1000) 55%, transparent);
-    display: inline-flex;
-    gap: 0.35rem;
-    padding: 0.25rem;
+.app-header__localizer.localizer {
+    right: calc(var(--admin-shell-inline-offset) + 25px);
 }
 
-.admin-surface-switcher__link {
-    border-radius: 999px;
-    color: var(--theme-text);
-    font-weight: 600;
-    padding: 0.55rem 0.95rem;
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
+[dir='rtl'] .app-header__localizer.localizer {
+    left: calc(var(--admin-shell-inline-offset) + 25px);
+    right: unset;
 }
 
-.admin-surface-switcher__link:hover {
-    background: var(--admin-surface-pill-hover);
+.template-default:has(.editorial-course-shell-nav-active) {
+    --nav-width: 22rem;
 }
 
-.admin-surface-switcher__link--active {
-    background: var(--admin-surface-active-bg);
-    color: var(--admin-surface-active-text);
-}
-
-.editorial-context-banner__inner {
-    background: linear-gradient(135deg, rgba(190, 210, 186, 0.2), rgba(236, 226, 198, 0.34));
-    border: 1px solid rgba(86, 96, 78, 0.18);
-    border-radius: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem 1.5rem;
-    justify-content: space-between;
-    padding: 1rem 1.25rem;
-}
-
-.editorial-context-banner__breadcrumbs {
-    align-items: center;
-    color: var(--theme-text);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    line-height: 1.4;
-}
-
-.editorial-context-banner__crumb {
-    align-items: center;
-    display: inline-flex;
-    gap: 0.35rem;
-}
-
-.editorial-context-banner__crumb--current {
-    color: var(--theme-text);
-    font-weight: 600;
-}
-
-.editorial-context-banner__separator {
-    color: var(--theme-text-dim);
-}
-
-.editorial-context-banner__link {
-    color: var(--theme-text);
-    text-decoration: none;
-}
-
-.editorial-context-banner__link:hover,
-.editorial-context-banner__return:hover {
-    text-decoration: underline;
-}
-
-.editorial-context-banner__link--root {
-    font-weight: 700;
-}
-
-.editorial-context-banner__meta {
-    align-items: flex-start;
-    display: flex;
+.editorial-course-shell-nav-portal {
+    display: none;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 1rem;
+    min-height: 100%;
+    width: 100%;
 }
 
-.editorial-context-banner__note {
-    color: var(--theme-text-dim);
-    font-size: 0.92rem;
+body.editorial-course-route-active .editorial-course-shell-nav-portal {
+    display: flex;
 }
 
-.editorial-context-banner__return {
-    color: var(--theme-text);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.editorial-locked-field {
-    background: rgba(236, 226, 198, 0.24);
-    border: 1px solid rgba(86, 96, 78, 0.18);
-    border-radius: 14px;
+.editorial-course-shell-nav__content {
     display: grid;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
-    padding: 0.9rem 1rem;
+    gap: 1rem;
+    width: 100%;
 }
 
-.editorial-locked-field__label {
-    color: var(--theme-text);
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+.nav__wrap.editorial-course-shell-nav-active {
+    align-items: stretch;
 }
 
-.editorial-locked-field__value {
-    color: var(--theme-text);
-    font-weight: 600;
+.nav__wrap.editorial-course-shell-nav-active > :not(.editorial-course-shell-nav-portal) {
+    display: none !important;
 }
 
-.editorial-locked-field__description {
-    color: var(--theme-text-dim);
-    margin: 0;
+.editorial-course-shell-nav-portal .nav__controls {
+    width: 100%;
+}
+
+.editorial-course-nav-panel {
+    display: grid;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.editorial-course-nav-panel .rounded-3xl {
+    border-radius: 1.25rem;
+}
+
+.editorial-course-nav-panel section + section {
+    border-top: 1px solid var(--theme-elevation-100);
+    padding-top: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+    .template-default:has(.editorial-course-shell-nav-active) {
+        --nav-width: min(21rem, calc(100vw - 2rem));
+    }
+}
+
+@media (max-width: 768px) {
+    .template-default:has(.editorial-course-shell-nav-active) {
+        --nav-width: min(22rem, calc(100vw - 1.5rem));
+    }
+}
+
+.admin-dashboard-panels > [hidden] {
+    display: none !important;
+}
+
+/* Hide the unhydrated nav shell entirely so Payload cannot flash stale sidebar UI. */
+body:has(.nav:not(.nav--nav-hydrated)) .nav:not(.nav--nav-hydrated) {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Hide the nav toggle until Payload finishes nav hydration so it does not flash open-state UI. */
+body:has(.nav:not(.nav--nav-hydrated)) .template-default__nav-toggler-wrapper {
+    visibility: hidden;
+    width: 0 !important;
+}
+
+/* Keep default-template pages rail-free unless the user is inside a course context. */
+body:not(.editorial-course-route-active) .template-default {
+    --nav-width: 0px;
+}
+
+body:not(.editorial-course-route-active) .template-default .nav {
+    display: none;
+}
+
+/* Keep the course-route toggle scoped to course routes at every breakpoint. */
+body:not(.editorial-course-route-active) .template-default__nav-toggler-wrapper {
+    display: none;
+}
+
+/* Prevent the closed nav hydration pass from animating the layout columns for a frame. */
+.template-default.template-default--nav-animate:has(.nav.nav--nav-hydrated:not(.nav--nav-open)) {
+    transition: none !important;
 }
 
 @media (max-width: 1440px) {
-    /* Hide the nav toggle until Payload finishes nav hydration so it does not flash open-state UI. */
-    body:has(.nav:not(.nav--nav-hydrated)) .template-default__nav-toggler-wrapper {
-        visibility: hidden;
-        width: 0 !important;
-    }
-
-    /* Disable the closed-nav grid animation to prevent a short content shift on tablet widths. */
-    .template-default.template-default--nav-hydrated:not(.template-default--nav-open) {
-        grid-template-columns: 0 auto !important;
-        transition: none !important;
-    }
-
-    .editorial-context-banner {
-        padding: 0 1rem;
-    }
-
-    .admin-surface-switcher {
-        padding: 0 1rem;
-    }
-
-    .editorial-context-banner__inner {
-        border-radius: 14px;
-        padding: 0.9rem 1rem;
-    }
-
-    .admin-surface-switcher__inner {
-        border-radius: 14px;
-        padding: 0.8rem 0.95rem;
-    }
 }

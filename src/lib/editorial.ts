@@ -48,6 +48,62 @@ export type EditorialContentSummary = Pick<
   'id' | 'title' | 'contentType' | 'updatedAt'
 >
 
+export type EditorialBreadcrumbItem = {
+  href?: string
+  label: string
+  root?: boolean
+}
+
+export type EditorialProjectContextNode = {
+  current: boolean
+  href: string
+  id: number
+  label: string
+}
+
+export type EditorialCourseContentNode = {
+  contentType: string
+  current: boolean
+  href: string
+  id: number
+  label: string
+}
+
+export type EditorialCoursePageNode = {
+  contentItems: EditorialCourseContentNode[]
+  current: boolean
+  href: string
+  id: number
+  label: string
+}
+
+export type EditorialCourseChapterNode = {
+  current: boolean
+  href: string
+  id: number
+  label: string
+  pages: EditorialCoursePageNode[]
+}
+
+export type EditorialCourseNavigation = {
+  course: {
+    chapters: EditorialCourseChapterNode[]
+    current: boolean
+    href: string
+    id: number
+    label: string
+  }
+  productContext: {
+    group: EditorialProjectContextNode
+    product: EditorialProjectContextNode
+    project: EditorialProjectContextNode
+  }
+}
+
+export function dashboardHref() {
+  return '/admin'
+}
+
 export function editorialHref() {
   return '/admin/editorial'
 }
@@ -121,6 +177,65 @@ export function contentHref(
   contentID: number,
 ) {
   return `${pageHref(projectID, groupID, productID, courseID, chapterID, pageID)}/content/${contentID}`
+}
+
+export function buildCourseContextBreadcrumbs({
+  chapter,
+  content,
+  course,
+  groupID,
+  page,
+  productID,
+  projectID,
+}: {
+  chapter?: Pick<CourseChapter, 'id' | 'title'>
+  content?: Pick<CourseContent, 'id' | 'title'>
+  course: Pick<Course, 'id' | 'title'>
+  groupID: number
+  page?: Pick<CoursePage, 'id' | 'title'>
+  productID: number
+  projectID: number
+}): EditorialBreadcrumbItem[] {
+  const breadcrumbs: EditorialBreadcrumbItem[] = [
+    { href: dashboardHref(), label: 'Home', root: true },
+  ]
+
+  const hasChapter = Boolean(chapter)
+  const hasPage = Boolean(page)
+  const hasContent = Boolean(content)
+
+  breadcrumbs.push({
+    href:
+      hasChapter || hasPage || hasContent
+        ? courseHref(projectID, groupID, productID, course.id)
+        : undefined,
+    label: course.title,
+  })
+
+  if (chapter) {
+    breadcrumbs.push({
+      href:
+        hasPage || hasContent
+          ? chapterHref(projectID, groupID, productID, course.id, chapter.id)
+          : undefined,
+      label: chapter.title,
+    })
+  }
+
+  if (page) {
+    breadcrumbs.push({
+      href: hasContent
+        ? pageHref(projectID, groupID, productID, course.id, chapter!.id, page.id)
+        : undefined,
+      label: page.title,
+    })
+  }
+
+  if (content) {
+    breadcrumbs.push({ label: content.title })
+  }
+
+  return breadcrumbs
 }
 
 export function projectGroupCreateHref(projectID: number) {
@@ -838,5 +953,165 @@ export async function loadContentOverview(
   return {
     ...pageOverview,
     content,
+  }
+}
+
+export async function loadCourseNavigation(
+  projectID: number,
+  groupID: number,
+  productID: number,
+  courseID: number,
+  active: {
+    chapterID?: number
+    contentID?: number
+    pageID?: number
+  } = {},
+  localeInput?: string,
+): Promise<EditorialCourseNavigation | null> {
+  const courseOverview = await loadCourseOverview(
+    projectID,
+    groupID,
+    productID,
+    courseID,
+    localeInput,
+  )
+  if (!courseOverview) return null
+
+  const chapterIDs = courseOverview.chapters.map((chapter) => chapter.id)
+  const pages =
+    chapterIDs.length === 0
+      ? []
+      : await findDocsSafe<CoursePage>(() =>
+          courseOverview.context.payload.find({
+            collection: 'course-pages',
+            depth: 0,
+            limit: 500,
+            locale: courseOverview.context.locale,
+            overrideAccess: false,
+            sort: 'updatedAt',
+            user: courseOverview.context.user ?? undefined,
+            where: {
+              chapter: {
+                in: chapterIDs,
+              },
+            },
+          }),
+        )
+
+  const pageIDsByChapter = new Map<number, CoursePage[]>()
+  const contentIDsByPage = new Map<number, number[]>()
+
+  for (const page of pages) {
+    const parentChapterID = relationshipID(page.chapter)
+    if (parentChapterID === null) continue
+
+    const chapterPages = pageIDsByChapter.get(parentChapterID) ?? []
+    chapterPages.push(page)
+    pageIDsByChapter.set(parentChapterID, chapterPages)
+
+    const contentIDs = Array.isArray(page.contentItems)
+      ? page.contentItems
+          .map((item) => relationshipID(item.content))
+          .filter((item): item is number => item !== null)
+      : []
+
+    contentIDsByPage.set(page.id, contentIDs)
+  }
+
+  const allContentIDs = [...new Set(Array.from(contentIDsByPage.values()).flat())]
+  const contentItems =
+    allContentIDs.length === 0
+      ? []
+      : await findDocsSafe<CourseContent>(() =>
+          courseOverview.context.payload.find({
+            collection: 'course-content',
+            depth: 0,
+            limit: allContentIDs.length,
+            locale: courseOverview.context.locale,
+            overrideAccess: false,
+            user: courseOverview.context.user ?? undefined,
+            where: {
+              id: {
+                in: allContentIDs,
+              },
+            },
+          }),
+        )
+
+  const contentByID = new Map(contentItems.map((item) => [item.id, item]))
+
+  return {
+    course: {
+      chapters: courseOverview.chapters.map((chapter) => {
+        const chapterPages = pageIDsByChapter.get(chapter.id) ?? []
+
+        return {
+          current:
+            active.chapterID === chapter.id &&
+            active.pageID === undefined &&
+            active.contentID === undefined,
+          href: chapterHref(projectID, groupID, productID, courseID, chapter.id),
+          id: chapter.id,
+          label: chapter.title,
+          pages: chapterPages.map((page) => {
+            const orderedContent = sortByIDs(
+              (contentIDsByPage.get(page.id) ?? [])
+                .map((contentID) => contentByID.get(contentID))
+                .filter((item): item is CourseContent => Boolean(item)),
+              contentIDsByPage.get(page.id) ?? [],
+            )
+
+            return {
+              contentItems: orderedContent.map((content) => ({
+                contentType: content.contentType,
+                current: active.contentID === content.id,
+                href: contentHref(
+                  projectID,
+                  groupID,
+                  productID,
+                  courseID,
+                  chapter.id,
+                  page.id,
+                  content.id,
+                ),
+                id: content.id,
+                label: content.title,
+              })),
+              current: active.pageID === page.id && active.contentID === undefined,
+              href: pageHref(projectID, groupID, productID, courseID, chapter.id, page.id),
+              id: page.id,
+              label: page.title,
+            }
+          }),
+        }
+      }),
+      current:
+        active.chapterID === undefined &&
+        active.pageID === undefined &&
+        active.contentID === undefined,
+      href: courseHref(projectID, groupID, productID, courseID),
+      id: courseOverview.course.id,
+      label: courseOverview.course.title,
+    },
+    productContext: {
+      group: {
+        current: false,
+        href: projectGroupHref(projectID, groupID),
+        id: courseOverview.group.id,
+        label: courseOverview.group.title,
+      },
+      product: {
+        current: false,
+        href: productHref(projectID, groupID, productID),
+        id: courseOverview.product.id,
+        label: courseOverview.product.title,
+      },
+      project: {
+        current: false,
+        href: projectHref(projectID),
+        id: courseOverview.project.id,
+        label: courseOverview.project.title,
+      },
+    },
   }
 }

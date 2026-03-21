@@ -1,14 +1,13 @@
 'use client'
 
 import { useAuth } from '@payloadcms/ui'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+import { useAdminSurface } from './AdminSurfaceContext'
 
 type AuthUser = {
   roles?: string[] | null
 }
-
-const hiddenPrefixes = ['/admin/login', '/admin/logout', '/admin/forgot', '/admin/reset']
 
 function isSuperAdmin(user: AuthUser | null | undefined) {
   return Array.isArray(user?.roles) && user.roles.includes('super-admin')
@@ -17,12 +16,9 @@ function isSuperAdmin(user: AuthUser | null | undefined) {
 export default function AdminSurfaceSwitcher() {
   const pathname = usePathname()
   const { user } = useAuth<AuthUser>()
+  const { setSurface, surface } = useAdminSurface()
 
-  if (!pathname.startsWith('/admin')) {
-    return null
-  }
-
-  if (hiddenPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+  if (pathname !== '/admin') {
     return null
   }
 
@@ -30,42 +26,54 @@ export default function AdminSurfaceSwitcher() {
     return null
   }
 
-  const inEditorial = pathname.startsWith('/admin/editorial')
-
   return (
-    <div className="admin-surface-switcher">
-      <div className="admin-surface-switcher__inner">
-        <div className="admin-surface-switcher__copy">
-          <span className="admin-surface-switcher__eyebrow">Surface</span>
-          <p className="admin-surface-switcher__description">
+    <div className="mx-auto box-border w-full max-w-7xl">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-[color-mix(in_srgb,var(--theme-elevation-250)_84%,var(--theme-success-500)_16%)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--theme-elevation-100)_92%,var(--theme-success-500)_8%),color-mix(in_srgb,var(--theme-elevation-50)_94%,var(--theme-warning-500)_6%))] px-4 py-[0.85rem] max-[1440px]:rounded-[14px] max-[1440px]:px-[0.95rem] max-[1440px]:py-[0.8rem]">
+        <div className="grid gap-[0.15rem]">
+          <span className="text-[0.74rem] font-bold uppercase tracking-[0.16em] text-[color-mix(in_srgb,var(--theme-text)_72%,transparent)]">
+            Surface
+          </span>
+          <p className="m-0 text-(--theme-text) opacity-90">
             Editorial is the shared content workspace. Administration is the maintenance surface.
           </p>
         </div>
 
-        <nav aria-label="Surface switcher" className="admin-surface-switcher__nav">
-          <Link
-            aria-current={inEditorial ? 'page' : undefined}
+        <div
+          aria-label="Surface switcher"
+          className="inline-flex gap-[0.35rem] rounded-full border border-[color-mix(in_srgb,var(--theme-elevation-250)_82%,var(--theme-elevation-1000)_18%)] p-1 [background:color-mix(in_srgb,var(--theme-elevation-0)_90%,var(--theme-elevation-1000)_10%)] [box-shadow:0_10px_24px_-18px_color-mix(in_srgb,var(--theme-elevation-1000)_55%,transparent)]"
+          role="tablist"
+        >
+          <button
+            aria-controls="admin-surface-panel-editorial"
+            aria-selected={surface === 'editorial'}
             className={
-              inEditorial
-                ? 'admin-surface-switcher__link admin-surface-switcher__link--active'
-                : 'admin-surface-switcher__link'
+              surface === 'editorial'
+                ? 'rounded-full border-0 px-[0.95rem] py-[0.55rem] font-semibold text-(--theme-elevation-0) transition [background:var(--theme-elevation-900)]'
+                : 'rounded-full border-0 bg-transparent px-[0.95rem] py-[0.55rem] font-semibold text-(--theme-text) transition hover:text-(--theme-text) [background:transparent] hover:[background:color-mix(in_srgb,var(--theme-elevation-100)_88%,var(--theme-success-500)_12%)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_color-mix(in_srgb,var(--theme-success-500)_28%,transparent)]'
             }
-            href="/admin/editorial"
+            id="admin-surface-tab-editorial"
+            onClick={() => setSurface('editorial')}
+            role="tab"
+            type="button"
           >
             Editorial
-          </Link>
-          <Link
-            aria-current={!inEditorial ? 'page' : undefined}
+          </button>
+          <button
+            aria-controls="admin-surface-panel-administration"
+            aria-selected={surface === 'administration'}
             className={
-              !inEditorial
-                ? 'admin-surface-switcher__link admin-surface-switcher__link--active'
-                : 'admin-surface-switcher__link'
+              surface === 'administration'
+                ? 'rounded-full border-0 px-[0.95rem] py-[0.55rem] font-semibold text-(--theme-elevation-0) transition [background:var(--theme-elevation-900)]'
+                : 'rounded-full border-0 bg-transparent px-[0.95rem] py-[0.55rem] font-semibold text-(--theme-text) transition hover:text-(--theme-text) [background:transparent] hover:[background:color-mix(in_srgb,var(--theme-elevation-100)_88%,var(--theme-success-500)_12%)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_color-mix(in_srgb,var(--theme-success-500)_28%,transparent)]'
             }
-            href="/admin"
+            id="admin-surface-tab-administration"
+            onClick={() => setSurface('administration')}
+            role="tab"
+            type="button"
           >
             Administration
-          </Link>
-        </nav>
+          </button>
+        </div>
       </div>
     </div>
   )

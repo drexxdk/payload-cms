@@ -48,10 +48,8 @@ function PaletteShadeRow({
   }
 
   return (
-    <tr className="border-t border-[var(--theme-elevation-100)] align-middle first:border-t-0">
-      <td className="px-4 py-4 text-sm font-medium text-[var(--theme-text)] w-20 truncate">
-        {shade}
-      </td>
+    <tr className="border-t border-(--theme-elevation-100) align-middle first:border-t-0">
+      <td className="w-20 truncate px-4 py-4 text-sm font-medium text-(--theme-text)">{shade}</td>
       <td className="px-4 py-4">
         <div
           className="flex h-12 w-56 items-center rounded-xl border border-black/10 px-4 text-sm font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] overflow-hidden"
@@ -60,7 +58,7 @@ function PaletteShadeRow({
           The quick brown fox
         </div>
       </td>
-      <td className="px-4 py-4 text-sm text-[var(--theme-text)] opacity-75 w-40 truncate">
+      <td className="w-40 truncate px-4 py-4 text-sm text-(--theme-text) opacity-75">
         {useDarkAccent ? 'Dark accent' : 'Light accent'}
       </td>
       <td className="px-4 py-4">
@@ -68,7 +66,7 @@ function PaletteShadeRow({
           <Switch
             checked={override}
             onChange={(checked) => overrideField.setValue(checked)}
-            className={`relative inline-flex h-[20px] w-[40px] shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75`}
+            className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75`}
             style={{
               backgroundColor: override
                 ? isDark
@@ -87,7 +85,7 @@ function PaletteShadeRow({
             <span className="sr-only">Override accent for shade {shade}</span>
             <span
               aria-hidden="true"
-              className={`pointer-events-none absolute h-[16px] w-[16px] rounded-full bg-white ring-0 transition-all duration-200 ease-in-out`}
+              className={`pointer-events-none absolute h-4 w-4 rounded-full bg-white ring-0 transition-all duration-200 ease-in-out`}
               style={{
                 left: override ? undefined : '2px',
                 right: override ? '2px' : undefined,
@@ -98,7 +96,7 @@ function PaletteShadeRow({
               }}
             />
           </Switch>
-          <span className="text-sm text-[var(--theme-text)] opacity-75">
+          <span className="text-sm text-(--theme-text) opacity-75">
             {override ? 'Using alternate accent' : 'Using recommended accent'}
           </span>
         </div>
@@ -130,18 +128,18 @@ export default function PaletteField() {
     <div className="p-2">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <div className="text-sm font-medium text-[var(--theme-text)]">Palette</div>
-          <div className="text-xs text-[var(--theme-text)] opacity-70">{String(palette ?? '')}</div>
+          <div className="text-sm font-medium text-(--theme-text)">Palette</div>
+          <div className="text-xs text-(--theme-text) opacity-70">{String(palette ?? '')}</div>
         </div>
-        <div className="text-xs uppercase tracking-[0.18em] text-[var(--theme-text)] opacity-55">
+        <div className="text-xs uppercase tracking-[0.18em] text-(--theme-text) opacity-55">
           Override accent
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[14px] border border-[var(--theme-elevation-150)] bg-[var(--theme-elevation-0)]">
+      <div className="overflow-x-auto rounded-[14px] border border-(--theme-elevation-150) bg-(--theme-elevation-0)">
         <table className="min-w-full table-fixed border-collapse w-full">
           <thead>
-            <tr className="text-left text-xs uppercase tracking-[0.16em] text-[var(--theme-text)] opacity-70">
+            <tr className="text-left text-xs uppercase tracking-[0.16em] text-(--theme-text) opacity-70">
               <th className="px-4 py-3 w-20">Shade</th>
               <th className="px-4 py-3 w-56">Preview</th>
               <th className="px-4 py-3 w-40">Recommended</th>

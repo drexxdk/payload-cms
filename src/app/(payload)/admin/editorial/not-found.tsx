@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { editorialHref } from '@/lib/editorial'
+import { dashboardHref } from '@/lib/editorial'
 
 export default function EditorialNotFound() {
   return (
@@ -17,7 +17,7 @@ export default function EditorialNotFound() {
       </p>
       <Link
         className="rounded-full bg-(--theme-text) px-4 py-2 text-sm font-medium text-(--theme-base-0) transition hover:opacity-85"
-        href={editorialHref()}
+        href={dashboardHref()}
       >
         Go to Home
       </Link>

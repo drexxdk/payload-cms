@@ -4,7 +4,6 @@ import { seedTestUser, cleanupTestUser, testUser } from '../helpers/seedUser'
 
 const chapterCreateContextURL =
   'http://localhost:3000/admin/collections/course-chapters/create?returnTo=%2Fadmin%2Feditorial%2Fprojects%2F1%2Fgroups%2F1%2Fproducts%2F1%2Fcourses%2F1&editorialProjectId=1&editorialGroupId=1&editorialProductId=1&editorialCourseId=1'
-const editorialHomeURL = 'http://localhost:3000/admin/editorial'
 const chapterEditorialURL =
   'http://localhost:3000/admin/editorial/projects/1/groups/1/products/1/courses/1/chapters/1'
 const invalidEditorialURL =
@@ -12,6 +11,23 @@ const invalidEditorialURL =
 
 test.describe('Admin Panel', () => {
   let page: Page
+
+  test('redirects unauthenticated users to login for protected admin routes', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext()
+    const unauthenticatedPage = await context.newPage()
+
+    await unauthenticatedPage.goto('http://localhost:3000/admin')
+    await expect(unauthenticatedPage).toHaveURL(/\/admin\/login/)
+    await expect(unauthenticatedPage.locator('#field-email')).toBeVisible()
+
+    await unauthenticatedPage.goto('http://localhost:3000/admin/editorial')
+    await expect(unauthenticatedPage).toHaveURL(/\/admin\/login/)
+    await expect(unauthenticatedPage.locator('#field-email')).toBeVisible()
+
+    await context.close()
+  })
 
   test.beforeAll(async ({ browser }, testInfo) => {
     await seedTestUser()
@@ -35,7 +51,7 @@ test.describe('Admin Panel', () => {
 
   test('can navigate to list view', async () => {
     await page.goto('http://localhost:3000/admin/collections/users')
-    await expect(page).toHaveURL('http://localhost:3000/admin/collections/users')
+    await expect(page).toHaveURL(/\/admin\/collections\/users(?:\?.*)?$/)
     const listViewArtifact = page.locator('h1', { hasText: 'Users' }).first()
     await expect(listViewArtifact).toBeVisible()
   })
@@ -47,13 +63,23 @@ test.describe('Admin Panel', () => {
     await expect(editViewArtifact).toBeVisible()
   })
 
-  test('shows the administration surface switcher and maintenance-only actions', async () => {
+  test('shows editorial by default and lets super-admins switch surfaces as tabs', async () => {
     await page.goto('http://localhost:3000/admin')
 
-    await expect(page.getByRole('navigation', { name: 'Surface switcher' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Administration' })).toHaveAttribute(
-      'aria-current',
-      'page',
+    await expect(page.getByRole('tablist', { name: 'Surface switcher' })).toBeVisible()
+    await expect(page.getByRole('tab', { name: 'Editorial' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Maintenance actions' })).toHaveCount(0)
+
+    await page.getByRole('tab', { name: 'Administration' }).click()
+
+    await expect(page).toHaveURL(/\/admin(?:\?surface=administration)?$/)
+    await expect(page.getByRole('tab', { name: 'Administration' })).toHaveAttribute(
+      'aria-selected',
+      'true',
     )
     await expect(page.getByRole('heading', { name: 'Maintenance actions' })).toBeVisible()
     await expect(
@@ -67,55 +93,61 @@ test.describe('Admin Panel', () => {
   test('shows editorial context and locked parent field on contextual create routes', async () => {
     await page.goto(chapterCreateContextURL)
 
-    await expect(page.getByRole('navigation', { name: 'Surface switcher' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Editorial', exact: true })).not.toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    await expect(page.getByRole('link', { name: 'Administration', exact: true })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
+    await expect(page.getByRole('navigation', { name: 'Surface switcher' })).toHaveCount(0)
     await expect(page.getByRole('navigation', { name: 'Editorial context' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'RBAC Demo Project' })).toHaveCount(0)
+    await expect(page.getByRole('link', { name: 'RBAC Demo Group' })).toHaveCount(0)
+    await expect(page.getByRole('link', { name: 'Intro to Shapes' })).toHaveCount(0)
+    await expect(page.getByRole('link', { name: 'RBAC Demo Course', exact: true })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Return to editorial page' })).toBeVisible()
     await expect(page.getByText('This course is locked by the editorial path.')).toBeVisible()
   })
 
-  test('shows editorial home as the canonical content entry point', async () => {
-    await page.goto(editorialHomeURL)
+  test('redirects editorial home to the unified admin dashboard', async () => {
+    await page.goto('http://localhost:3000/admin/editorial')
 
-    await expect(page).toHaveURL(editorialHomeURL)
-    await expect(page.getByRole('link', { name: 'Editorial', exact: true })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    await expect(page.getByRole('heading', { name: 'Home' })).toBeVisible()
+    await expect(page).toHaveURL('http://localhost:3000/admin')
+    await expect(page.getByRole('tablist', { name: 'Surface switcher' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
     await expect(page.getByRole('link', { name: /RBAC Demo Project/i })).toBeVisible()
-    await expect(
-      page.getByRole('heading', { name: 'Maintenance routes are separate' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Maintenance stays nearby' })).toBeVisible()
   })
 
   test('shows canonical editorial chapter routes with breadcrumb lineage and direct page children', async () => {
     await page.goto(chapterEditorialURL)
 
+    const breadcrumbNav = page.getByRole('navigation', { name: 'Breadcrumb' })
+
     await expect(page).toHaveURL(chapterEditorialURL)
-    await expect(page.getByRole('link', { name: 'Editorial', exact: true })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Home' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'RBAC Demo Project' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'RBAC Demo Group' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Intro to Shapes' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'RBAC Demo Course' })).toBeVisible()
+    await expect(page.getByRole('tablist', { name: 'Surface switcher' })).toHaveCount(0)
+    await expect(breadcrumbNav).toBeVisible()
+    await expect(breadcrumbNav.getByRole('link', { name: 'Home' })).toBeVisible()
+    await expect(
+      breadcrumbNav.getByRole('link', { name: 'RBAC Demo Course', exact: true }),
+    ).toBeVisible()
+    await expect(breadcrumbNav.getByRole('link', { name: 'RBAC Demo Project' })).toHaveCount(0)
+    await expect(breadcrumbNav.getByRole('link', { name: 'RBAC Demo Group' })).toHaveCount(0)
+    await expect(breadcrumbNav.getByRole('link', { name: 'Intro to Shapes' })).toHaveCount(0)
+    await expect(
+      page.getByRole('button', {
+        name: /course menu|hide course menu|show course menu|open course menu/i,
+      }),
+    ).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Welcome and Roles' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Create page' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Pages' })).toBeVisible()
-    await expect(page.getByRole('link', { name: /What teachers should see first/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Access walkthrough/i })).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: /What teachers should see first/i }).first(),
+    ).toBeVisible()
+    await expect(page.getByRole('link', { name: /Access walkthrough/i }).first()).toBeVisible()
+
+    const navToggle = page.getByRole('button', { name: /open menu|close menu/i }).first()
+    await expect(navToggle).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Course menu' })).toHaveCount(0)
+
+    await breadcrumbNav.getByRole('link', { name: 'Home' }).click()
+    await expect(page).toHaveURL('http://localhost:3000/admin')
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
   })
 
   test('shows editorial not-found for invalid canonical tree locations', async () => {

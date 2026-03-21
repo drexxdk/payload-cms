@@ -2,6 +2,12 @@ import { getTranslation } from '@payloadcms/translations'
 import type { AdminViewServerProps, Where } from 'payload'
 import type { ReactNode } from 'react'
 
+import { isSuperAdmin } from '@/access/rbac'
+
+import AdminDashboardPanels from './AdminDashboardPanels'
+import AdminSurfaceSwitcher from './AdminSurfaceSwitcher'
+import EditorialDashboard from './EditorialDashboard'
+
 type TranslationLabel = Parameters<typeof getTranslation>[0]
 
 type Metric = {
@@ -493,6 +499,28 @@ function getStringField(item: Record<string, unknown>, key: string) {
 }
 
 export default async function AdminDashboard(props: AdminViewServerProps) {
+  const canAccessAdministration = isSuperAdmin(props.initPageResult.req.user)
+
+  return (
+    <div className="grid gap-4">
+      <AdminSurfaceSwitcher />
+      <AdminDashboardPanels
+        administration={
+          canAccessAdministration ? <AdministrationDashboardContent {...props} /> : undefined
+        }
+        canAccessAdministration={canAccessAdministration}
+        editorial={
+          <EditorialDashboard
+            canAccessAdministration={canAccessAdministration}
+            locale={props.initPageResult.locale?.code}
+          />
+        }
+      />
+    </div>
+  )
+}
+
+async function AdministrationDashboardContent(props: AdminViewServerProps) {
   const i18n = props.initPageResult.req.i18n
   const [
     projects,

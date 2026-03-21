@@ -15,8 +15,8 @@ export default async function HomePage() {
   const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
 
   return (
-    <div className="flex flex-col justify-between items-center h-screen p-11 max-w-[1024px] mx-auto overflow-hidden">
-      <div className="flex flex-col items-center justify-center flex-grow">
+    <div className="mx-auto flex h-screen max-w-5xl flex-col items-center justify-between overflow-hidden p-11">
+      <div className="flex grow flex-col items-center justify-center">
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
           <Image

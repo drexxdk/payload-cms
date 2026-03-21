@@ -277,10 +277,23 @@ export default function EditorialContextBanner() {
     return null
   }
 
-  const parentKeys =
-    currentEntity === 'content'
-      ? orderedEntityKeys.filter((entity) => contextIDs[entity] !== null)
-      : orderedEntityKeys.slice(0, orderedEntityKeys.indexOf(currentEntity))
+  const parentKeys = (() => {
+    const courseContextStartIndex =
+      contextIDs.course !== null ? orderedEntityKeys.indexOf('course') : 0
+    const scopedEntityKeys = orderedEntityKeys.slice(courseContextStartIndex)
+
+    if (currentEntity === 'content') {
+      return scopedEntityKeys.filter((entity) => contextIDs[entity] !== null)
+    }
+
+    const currentIndex = orderedEntityKeys.indexOf(currentEntity)
+    const scopedEndIndex =
+      currentEntity === 'course' && contextIDs.course !== null ? currentIndex + 1 : currentIndex
+
+    return orderedEntityKeys
+      .slice(courseContextStartIndex, scopedEndIndex)
+      .filter((entity) => contextIDs[entity] !== null)
+  })()
 
   const breadcrumbs = parentKeys
     .map((entity) => {
@@ -303,36 +316,45 @@ export default function EditorialContextBanner() {
       `Edit ${collectionConfig[route.collection]?.singular ?? 'item'}`)
 
   return (
-    <div className="editorial-context-banner">
-      <div className="editorial-context-banner__inner">
-        <nav aria-label="Editorial context" className="editorial-context-banner__breadcrumbs">
+    <div className="mb-5 px-6 max-[1440px]:px-(--gutter-h)">
+      <div className="flex flex-wrap justify-between gap-[0.85rem] rounded-[18px] border border-[color-mix(in_srgb,var(--theme-elevation-250)_80%,var(--theme-success-500)_20%)] px-5 py-4 [background:linear-gradient(135deg,color-mix(in_srgb,var(--theme-elevation-50)_90%,var(--theme-success-500)_10%),color-mix(in_srgb,var(--theme-elevation-0)_92%,var(--theme-warning-500)_8%))] max-[1440px]:rounded-[14px] max-[1440px]:px-4 max-[1440px]:py-[0.9rem]">
+        <nav
+          aria-label="Editorial context"
+          className="flex flex-wrap items-center gap-[0.35rem] text-(--theme-text) leading-[1.4]"
+        >
           <Link
-            className="editorial-context-banner__link editorial-context-banner__link--root"
+            className="font-bold text-(--theme-text) no-underline transition hover:text-(--theme-text) hover:opacity-[0.82] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color-mix(in_srgb,var(--theme-success-500)_28%,transparent)]"
             href="/admin/editorial"
           >
             Home
           </Link>
 
           {breadcrumbs.map((crumb) => (
-            <span className="editorial-context-banner__crumb" key={crumb.href}>
-              <span className="editorial-context-banner__separator">/</span>
-              <Link className="editorial-context-banner__link" href={crumb.href}>
+            <span className="inline-flex items-center gap-[0.35rem]" key={crumb.href}>
+              <span className="text-(--theme-text-dim)">/</span>
+              <Link
+                className="text-(--theme-text) no-underline transition hover:text-(--theme-text) hover:opacity-[0.82] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color-mix(in_srgb,var(--theme-success-500)_28%,transparent)]"
+                href={crumb.href}
+              >
                 {crumb.label}
               </Link>
             </span>
           ))}
 
-          <span className="editorial-context-banner__crumb editorial-context-banner__crumb--current">
-            <span className="editorial-context-banner__separator">/</span>
+          <span className="inline-flex items-center gap-[0.35rem] font-semibold text-(--theme-text)">
+            <span className="text-(--theme-text-dim)">/</span>
             <span>{currentLabel}</span>
           </span>
         </nav>
 
-        <div className="editorial-context-banner__meta">
-          <span className="editorial-context-banner__note">
+        <div className="flex flex-col items-start gap-[0.3rem]">
+          <span className="text-[0.92rem] text-(--theme-text-dim)">
             This form stays anchored to the editorial tree.
           </span>
-          <Link className="editorial-context-banner__return" href={returnTo}>
+          <Link
+            className="font-semibold text-(--theme-text) no-underline transition hover:text-(--theme-text) hover:opacity-[0.82] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color-mix(in_srgb,var(--theme-success-500)_28%,transparent)]"
+            href={returnTo}
+          >
             Return to editorial page
           </Link>
         </div>

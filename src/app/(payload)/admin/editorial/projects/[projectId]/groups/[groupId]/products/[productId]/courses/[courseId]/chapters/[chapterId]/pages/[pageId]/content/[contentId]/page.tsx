@@ -1,17 +1,13 @@
 import { notFound } from 'next/navigation'
 
 import { EditorialInfoGrid, EditorialPage } from '@/components/admin/editorial/EditorialChrome'
+import CourseNavigationPanel from '@/components/admin/editorial/CourseNavigationPanel'
 import {
-  chapterHref,
+  buildCourseContextBreadcrumbs,
   contentEditHref,
-  courseHref,
-  editorialHref,
   formatDate,
   loadContentOverview,
-  pageHref,
-  productHref,
-  projectGroupHref,
-  projectHref,
+  loadCourseNavigation,
   richTextSummary,
 } from '@/lib/editorial'
 
@@ -47,17 +43,27 @@ export default async function ContentEditorialPage({ params, searchParams }: Arg
     notFound()
   }
 
-  const data = await loadContentOverview(
-    projectID,
-    groupID,
-    productID,
-    courseID,
-    chapterID,
-    pageID,
-    contentID,
-    locale,
-  )
-  if (!data) notFound()
+  const [data, navigation] = await Promise.all([
+    loadContentOverview(
+      projectID,
+      groupID,
+      productID,
+      courseID,
+      chapterID,
+      pageID,
+      contentID,
+      locale,
+    ),
+    loadCourseNavigation(
+      projectID,
+      groupID,
+      productID,
+      courseID,
+      { chapterID, contentID, pageID },
+      locale,
+    ),
+  ])
+  if (!data || !navigation) notFound()
 
   return (
     <EditorialPage
@@ -76,41 +82,15 @@ export default async function ContentEditorialPage({ params, searchParams }: Arg
           secondary: true,
         },
       ]}
-      breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
-        { href: projectHref(data.project.id), label: data.project.title },
-        { href: projectGroupHref(data.project.id, data.group.id), label: data.group.title },
-        {
-          href: productHref(data.project.id, data.group.id, data.product.id),
-          label: data.product.title,
-        },
-        {
-          href: courseHref(data.project.id, data.group.id, data.product.id, data.course.id),
-          label: data.course.title,
-        },
-        {
-          href: chapterHref(
-            data.project.id,
-            data.group.id,
-            data.product.id,
-            data.course.id,
-            data.chapter.id,
-          ),
-          label: data.chapter.title,
-        },
-        {
-          href: pageHref(
-            data.project.id,
-            data.group.id,
-            data.product.id,
-            data.course.id,
-            data.chapter.id,
-            data.page.id,
-          ),
-          label: data.page.title,
-        },
-        { label: data.content.title },
-      ]}
+      breadcrumbs={buildCourseContextBreadcrumbs({
+        chapter: data.chapter,
+        content: data.content,
+        course: data.course,
+        groupID: data.group.id,
+        page: data.page,
+        productID: data.product.id,
+        projectID: data.project.id,
+      })}
       description="Content screens focus on the current reusable content item."
       meta={[
         data.content.contentType,
@@ -118,6 +98,7 @@ export default async function ContentEditorialPage({ params, searchParams }: Arg
           ? [`Updated ${formatDate(data.content.updatedAt)}`]
           : []),
       ]}
+      sidePanel={<CourseNavigationPanel navigation={navigation} />}
       title={data.content.title}
     >
       <EditorialInfoGrid

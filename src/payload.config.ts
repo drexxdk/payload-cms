@@ -48,7 +48,6 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
-      providers: ['/components/admin/AdminNavBootstrap'],
       views: {
         dashboard: {
           Component: '/components/admin/AdminDashboard',

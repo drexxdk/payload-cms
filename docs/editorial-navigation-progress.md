@@ -113,6 +113,14 @@ Completed so far:
 20. Cleared editorial route lint warnings and verified both repository lint and production build pass.
 21. Fixed the surface switcher contrast so it now follows Payload theme tokens and remains readable in dark mode.
 22. Fixed duplicate editorial action keys by giving same-screen maintenance actions distinct intent URLs instead of reusing identical hrefs.
+23. Trimmed breadcrumbs inside course context so course descendants no longer repeat project, group, and product lineage in the breadcrumb trail.
+24. Added a dedicated course menu with a compact product-context tree and a full course outline tree on canonical course routes.
+25. Restricted the Editorial/Administration surface switcher to the `/admin` dashboard only.
+26. Cleaned up custom editorial/admin chrome hover and focus styling so links read like navigation and action buttons stay visually consistent in light and dark themes.
+27. Added a server-side auth guard for the custom `/admin/editorial` route tree so unauthenticated requests redirect to `/admin/login` like the rest of the admin surface.
+28. Re-ran focused admin Playwright coverage and a production build after the auth gate landed.
+29. Unified `/admin` into a single dashboard route with an editorial-default surface and an in-page Administration tab for super-admins.
+30. Retargeted editorial `Home` links back to `/admin`, redirected `/admin/editorial` to `/admin`, and replaced the custom course toggle with shell-aligned panel behavior.
 
 ## Latest Notes
 
@@ -129,6 +137,12 @@ Completed so far:
 11. Repository lint and production build both pass after removing unused editorial route imports.
 12. The surface switcher now uses theme-aware styling instead of fixed light colors, so it stays readable in both dark and light modes.
 13. Same-screen maintenance actions now carry distinct editorial intent params, so React keys and URLs stay stable even when multiple actions land on the same raw document screen.
+14. Course-context routes now move project, group, and product lineage into a dedicated side menu, leaving breadcrumbs focused on `Home -> Course -> ...`.
+15. The course menu toggle is only present on canonical course-context editorial routes.
+16. The surface switcher now appears only on the administration dashboard instead of every admin page.
+17. Custom editorial app-router pages now enforce login through their own layout instead of relying on Payload's built-in admin route protection.
+18. `/admin` is now the canonical dashboard home, and the surface switcher behaves like tabs instead of jumping between dashboard routes.
+19. Course routes now rely on the real shell toggle on narrower layouts instead of a separate right-side course-menu button.
 
 ## Update Log
 
@@ -154,3 +168,9 @@ Completed so far:
 18. Completed the surface switcher theme-alignment pass with improved contrast and theme-aware styling.
 19. Started a duplicate-key bugfix pass after hitting a React warning on the project group editorial route.
 20. Completed the duplicate-key bugfix by separating shared raw-route actions with explicit editorial intent query params.
+21. Started a course-context navigation refinement pass to trim breadcrumbs, add the split course menu, and tighten custom chrome styling.
+22. Completed the course-context navigation refinement pass with dashboard-only surface switching, a canonical course menu, and trimmed course-context breadcrumbs.
+23. Added an editorial route auth-guard pass after confirming unauthenticated deep links were bypassing login on the custom app-router tree.
+24. Completed the auth-guard pass and re-verified with focused admin Playwright coverage plus a successful production build.
+25. Started a unified-dashboard pass to make Editorial and Administration feel like surfaces of one `/admin` home instead of separate landing pages.
+26. Completed the unified-dashboard pass with tabbed surface switching, `/admin/editorial` redirecting to `/admin`, breadcrumb Home fixes, and shell-aligned course-panel behavior.

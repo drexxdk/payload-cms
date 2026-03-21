@@ -7,18 +7,16 @@ import {
   EditorialSection,
 } from '@/components/admin/editorial/EditorialChrome'
 import {
+  buildCourseContextBreadcrumbs,
   chapterEditHref,
-  editorialHref,
   formatDate,
   loadChapterOverview,
+  loadCourseNavigation,
   pageCreateHref,
   pageHref,
-  productHref,
-  projectGroupHref,
-  projectHref,
-  courseHref,
   richTextSummary,
 } from '@/lib/editorial'
+import CourseNavigationPanel from '@/components/admin/editorial/CourseNavigationPanel'
 
 type Args = {
   params: Promise<{
@@ -44,8 +42,11 @@ export default async function ChapterEditorialPage({ params, searchParams }: Arg
 
   if (![projectID, groupID, productID, courseID, chapterID].every(Number.isInteger)) notFound()
 
-  const data = await loadChapterOverview(projectID, groupID, productID, courseID, chapterID, locale)
-  if (!data) notFound()
+  const [data, navigation] = await Promise.all([
+    loadChapterOverview(projectID, groupID, productID, courseID, chapterID, locale),
+    loadCourseNavigation(projectID, groupID, productID, courseID, { chapterID }, locale),
+  ])
+  if (!data || !navigation) notFound()
 
   return (
     <EditorialPage
@@ -72,24 +73,18 @@ export default async function ChapterEditorialPage({ params, searchParams }: Arg
           secondary: true,
         },
       ]}
-      breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
-        { href: projectHref(data.project.id), label: data.project.title },
-        { href: projectGroupHref(data.project.id, data.group.id), label: data.group.title },
-        {
-          href: productHref(data.project.id, data.group.id, data.product.id),
-          label: data.product.title,
-        },
-        {
-          href: courseHref(data.project.id, data.group.id, data.product.id, data.course.id),
-          label: data.course.title,
-        },
-        { label: data.chapter.title },
-      ]}
+      breadcrumbs={buildCourseContextBreadcrumbs({
+        chapter: data.chapter,
+        course: data.course,
+        groupID: data.group.id,
+        productID: data.product.id,
+        projectID: data.project.id,
+      })}
       description="Chapter screens focus on pages as their direct children."
       meta={
         formatDate(data.chapter.updatedAt) ? [`Updated ${formatDate(data.chapter.updatedAt)}`] : []
       }
+      sidePanel={<CourseNavigationPanel navigation={navigation} />}
       title={data.chapter.title}
     >
       <EditorialInfoGrid

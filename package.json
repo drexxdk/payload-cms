@@ -21,6 +21,7 @@
     "db:drop": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/db/drop-db.ts"
   },
   "dependencies": {
+    "@date-fns/tz": "1.2.0",
     "@headlessui/react": "^1.8.0",
     "@payloadcms/db-postgres": "^3.79.1",
     "@payloadcms/next": "3.79.1",
@@ -30,6 +31,7 @@
     "@tailwindcss/postcss": "latest",
     "autoprefixer": "latest",
     "cross-env": "^7.0.3",
+    "date-fns": "4.1.0",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "next": "15.4.11",

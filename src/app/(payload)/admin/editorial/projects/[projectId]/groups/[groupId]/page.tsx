@@ -7,7 +7,7 @@ import {
   EditorialSection,
 } from '@/components/admin/editorial/EditorialChrome'
 import {
-  editorialHref,
+  dashboardHref,
   loadProjectGroupOverview,
   productHref,
   projectGroupEditHref,
@@ -47,7 +47,7 @@ export default async function ProjectGroupEditorialPage({ params, searchParams }
         },
       ]}
       breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
+        { href: dashboardHref(), label: 'Home', root: true },
         { href: projectHref(data.project.id), label: data.project.title },
         { label: data.group.title },
       ]}

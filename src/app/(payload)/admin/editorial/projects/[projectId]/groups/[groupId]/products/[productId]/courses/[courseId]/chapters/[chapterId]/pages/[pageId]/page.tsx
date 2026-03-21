@@ -7,19 +7,16 @@ import {
   EditorialSection,
 } from '@/components/admin/editorial/EditorialChrome'
 import {
-  chapterHref,
+  buildCourseContextBreadcrumbs,
   contentHref,
-  courseHref,
-  editorialHref,
   formatDate,
   loadPageOverview,
+  loadCourseNavigation,
   pageEditHref,
   pageManageContentHref,
-  productHref,
-  projectGroupHref,
-  projectHref,
   richTextSummary,
 } from '@/lib/editorial'
+import CourseNavigationPanel from '@/components/admin/editorial/CourseNavigationPanel'
 
 type Args = {
   params: Promise<{
@@ -49,16 +46,11 @@ export default async function PageEditorialPage({ params, searchParams }: Args) 
     notFound()
   }
 
-  const data = await loadPageOverview(
-    projectID,
-    groupID,
-    productID,
-    courseID,
-    chapterID,
-    pageID,
-    locale,
-  )
-  if (!data) notFound()
+  const [data, navigation] = await Promise.all([
+    loadPageOverview(projectID, groupID, productID, courseID, chapterID, pageID, locale),
+    loadCourseNavigation(projectID, groupID, productID, courseID, { chapterID, pageID }, locale),
+  ])
+  if (!data || !navigation) notFound()
 
   return (
     <EditorialPage
@@ -87,32 +79,17 @@ export default async function PageEditorialPage({ params, searchParams }: Args) 
           secondary: true,
         },
       ]}
-      breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
-        { href: projectHref(data.project.id), label: data.project.title },
-        { href: projectGroupHref(data.project.id, data.group.id), label: data.group.title },
-        {
-          href: productHref(data.project.id, data.group.id, data.product.id),
-          label: data.product.title,
-        },
-        {
-          href: courseHref(data.project.id, data.group.id, data.product.id, data.course.id),
-          label: data.course.title,
-        },
-        {
-          href: chapterHref(
-            data.project.id,
-            data.group.id,
-            data.product.id,
-            data.course.id,
-            data.chapter.id,
-          ),
-          label: data.chapter.title,
-        },
-        { label: data.page.title },
-      ]}
+      breadcrumbs={buildCourseContextBreadcrumbs({
+        chapter: data.chapter,
+        course: data.course,
+        groupID: data.group.id,
+        page: data.page,
+        productID: data.product.id,
+        projectID: data.project.id,
+      })}
       description="Page screens focus on ordered content placements. Parent lineage stays in the breadcrumb."
       meta={formatDate(data.page.updatedAt) ? [`Updated ${formatDate(data.page.updatedAt)}`] : []}
+      sidePanel={<CourseNavigationPanel navigation={navigation} />}
       title={data.page.title}
     >
       <EditorialInfoGrid

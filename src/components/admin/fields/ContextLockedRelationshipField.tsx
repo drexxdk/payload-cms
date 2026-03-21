@@ -91,14 +91,14 @@ const ContextLockedRelationshipField: RelationshipFieldClientComponent = (props)
   }
 
   return (
-    <div className="editorial-locked-field">
-      <div className="editorial-locked-field__label">
+    <div className="mb-4 grid gap-1.5 rounded-[14px] border border-[rgba(86,96,78,0.18)] px-4 py-[0.9rem] [background:rgba(236,226,198,0.24)]">
+      <div className="text-[0.85rem] font-bold uppercase tracking-[0.02em] text-(--theme-text)">
         {resolveLabel(props.field.label, props.field.name)}
       </div>
-      <div className="editorial-locked-field__value">
+      <div className="font-semibold text-(--theme-text)">
         This {context.label} is locked by the editorial path.
       </div>
-      <p className="editorial-locked-field__description">
+      <p className="m-0 text-(--theme-text-dim)">
         Open this document from a different place in the editorial tree if you need to change its
         parent.
       </p>

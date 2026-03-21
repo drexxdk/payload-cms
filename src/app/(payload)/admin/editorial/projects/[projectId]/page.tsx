@@ -7,7 +7,7 @@ import {
   EditorialSection,
 } from '@/components/admin/editorial/EditorialChrome'
 import {
-  editorialHref,
+  dashboardHref,
   formatStatus,
   loadProjectOverview,
   projectEditHref,
@@ -46,7 +46,7 @@ export default async function ProjectEditorialPage({ params, searchParams }: Arg
         },
       ]}
       breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
+        { href: dashboardHref(), label: 'Home', root: true },
         { label: data.project.title },
       ]}
       description="Projects expose only their direct children. Open a project group to continue down the tree."

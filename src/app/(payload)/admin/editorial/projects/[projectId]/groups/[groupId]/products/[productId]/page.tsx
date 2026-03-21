@@ -8,12 +8,12 @@ import {
 } from '@/components/admin/editorial/EditorialChrome'
 import {
   courseHref,
-  editorialHref,
+  dashboardHref,
+  loadProductOverview,
   productEditHref,
   productManageCoursesHref,
   projectGroupHref,
   projectHref,
-  loadProductOverview,
 } from '@/lib/editorial'
 
 type Args = {
@@ -51,7 +51,7 @@ export default async function ProductEditorialPage({ params, searchParams }: Arg
         },
       ]}
       breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
+        { href: dashboardHref(), label: 'Home', root: true },
         { href: projectHref(data.project.id), label: data.project.title },
         { href: projectGroupHref(data.project.id, data.group.id), label: data.group.title },
         { label: data.product.title },

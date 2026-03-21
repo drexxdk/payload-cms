@@ -51,19 +51,20 @@ export function EditorialPage({
   description?: string
   eyebrow?: string
   meta?: string[]
+  sidePanel?: ReactNode
   title: string
 }) {
-  return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-6 text-(--theme-text)">
+  const pageContent = (
+    <div className="flex flex-col gap-6 text-(--theme-text)">
       <nav
         aria-label="Breadcrumb"
-        className="rounded-3xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) px-5 py-3 shadow-sm"
+        className="rounded-4xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) px-5 py-3 shadow-sm"
       >
         <ol className="flex flex-wrap items-center gap-2 text-sm text-(--theme-text) opacity-80">
           {breadcrumbs.map((crumb, index) => {
             const isLast = index === breadcrumbs.length - 1
             const content = (
-              <span className="inline-flex items-center gap-2 rounded-full px-2 py-1">
+              <span className="inline-flex items-center gap-2">
                 {crumb.root ? <HomeIcon /> : null}
                 <span>{crumb.label}</span>
               </span>
@@ -72,7 +73,10 @@ export function EditorialPage({
             return (
               <li key={`${crumb.label}-${index}`} className="inline-flex items-center gap-2">
                 {crumb.href && !isLast ? (
-                  <Link className="transition hover:text-(--theme-success-500)" href={crumb.href}>
+                  <Link
+                    className="rounded-md text-(--theme-text) no-underline transition hover:text-(--theme-text) hover:opacity-100"
+                    href={crumb.href}
+                  >
                     {content}
                   </Link>
                 ) : (
@@ -128,8 +132,8 @@ export function EditorialPage({
                   key={action.key ?? `${action.label}-${action.href}-${index}`}
                   className={
                     action.secondary
-                      ? 'rounded-full border border-(--theme-elevation-150) px-4 py-2 text-sm font-medium transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)'
-                      : 'rounded-full bg-(--admin-surface-active-bg) px-4 py-2 text-sm font-medium text-(--admin-surface-active-text) transition hover:opacity-85'
+                      ? 'rounded-full border border-(--theme-elevation-200) bg-(--theme-elevation-0) px-4 py-2 text-sm font-medium text-(--theme-text) no-underline transition hover:border-(--theme-elevation-300) hover:bg-(--theme-elevation-50)'
+                      : 'rounded-full bg-(--theme-text) px-4 py-2 text-sm font-medium text-(--theme-elevation-0) no-underline transition hover:opacity-90'
                   }
                   href={action.href}
                 >
@@ -142,6 +146,12 @@ export function EditorialPage({
       </section>
 
       {children}
+    </div>
+  )
+
+  return (
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-6 text-(--theme-text)">
+      {pageContent}
     </div>
   )
 }
@@ -186,7 +196,7 @@ export function EditorialList({
       {items.map((item, index) => (
         <Link
           key={item.key ?? `${item.title}-${item.href}-${index}`}
-          className="rounded-3xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) px-5 py-4 transition hover:border-(--theme-success-500) hover:bg-(--theme-elevation-50)"
+          className="rounded-3xl border border-(--theme-elevation-150) bg-(--theme-elevation-0) px-5 py-4 no-underline transition hover:border-(--theme-elevation-250) hover:bg-(--theme-elevation-50)"
           href={item.href}
         >
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">

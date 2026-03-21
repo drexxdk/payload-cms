@@ -1,30 +1,42 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useNav } from '@payloadcms/ui'
 import { useLayoutEffect } from 'react'
 
-import AdminSurfaceSwitcher from './AdminSurfaceSwitcher'
+import { isCourseRoute } from '@/lib/admin/courseRoute'
+
+import { AdminSurfaceProvider } from './AdminSurfaceContext'
+import CourseNavPortal from './CourseNavPortal'
 import EditorialContextBanner from './editorial/EditorialContextBanner'
 
-const desktopNavBreakpoint = '(max-width: 1440px)'
-
 export default function AdminNavBootstrap({ children }: { children?: React.ReactNode }) {
-  const { setNavOpen } = useNav()
+  const pathname = usePathname()
+  const { navOpen, setNavOpen } = useNav()
+  const courseRouteActive = isCourseRoute(pathname)
 
   useLayoutEffect(() => {
-    // Payload can briefly reuse the server-side open nav state on narrower widths
-    // before breakpoint hydration settles. Closing it in a layout effect prevents
-    // the visible sidebar flash without forcing the shell layout through CSS.
-    if (window.matchMedia(desktopNavBreakpoint).matches) {
+    document.body.classList.toggle('editorial-course-route-active', courseRouteActive)
+
+    if (!courseRouteActive) {
       setNavOpen(false)
+      return () => {
+        document.body.classList.remove('editorial-course-route-active')
+      }
     }
-  }, [setNavOpen])
+
+    setNavOpen(false)
+
+    return () => {
+      document.body.classList.remove('editorial-course-route-active')
+    }
+  }, [courseRouteActive, setNavOpen])
 
   return (
-    <>
-      <AdminSurfaceSwitcher />
+    <AdminSurfaceProvider>
       <EditorialContextBanner />
+      {courseRouteActive && navOpen ? <CourseNavPortal /> : null}
       {children}
-    </>
+    </AdminSurfaceProvider>
   )
 }

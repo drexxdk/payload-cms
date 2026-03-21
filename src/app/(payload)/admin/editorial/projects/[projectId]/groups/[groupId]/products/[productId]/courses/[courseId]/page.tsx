@@ -7,17 +7,16 @@ import {
   EditorialSection,
 } from '@/components/admin/editorial/EditorialChrome'
 import {
+  buildCourseContextBreadcrumbs,
   chapterHref,
   chapterCreateHref,
   courseEditHref,
-  editorialHref,
   formatDate,
-  projectGroupHref,
-  projectHref,
-  productHref,
+  loadCourseNavigation,
   richTextSummary,
   loadCourseOverview,
 } from '@/lib/editorial'
+import CourseNavigationPanel from '@/components/admin/editorial/CourseNavigationPanel'
 
 type Args = {
   params: Promise<{ courseId: string; groupId: string; productId: string; projectId: string }>
@@ -36,8 +35,11 @@ export default async function CourseEditorialPage({ params, searchParams }: Args
 
   if (![projectID, groupID, productID, courseID].every(Number.isInteger)) notFound()
 
-  const data = await loadCourseOverview(projectID, groupID, productID, courseID, locale)
-  if (!data) notFound()
+  const [data, navigation] = await Promise.all([
+    loadCourseOverview(projectID, groupID, productID, courseID, locale),
+    loadCourseNavigation(projectID, groupID, productID, courseID, {}, locale),
+  ])
+  if (!data || !navigation) notFound()
 
   return (
     <EditorialPage
@@ -52,20 +54,17 @@ export default async function CourseEditorialPage({ params, searchParams }: Args
           secondary: true,
         },
       ]}
-      breadcrumbs={[
-        { href: editorialHref(), label: 'Home', root: true },
-        { href: projectHref(data.project.id), label: data.project.title },
-        { href: projectGroupHref(data.project.id, data.group.id), label: data.group.title },
-        {
-          href: productHref(data.project.id, data.group.id, data.product.id),
-          label: data.product.title,
-        },
-        { label: data.course.title },
-      ]}
+      breadcrumbs={buildCourseContextBreadcrumbs({
+        course: data.course,
+        groupID: data.group.id,
+        productID: data.product.id,
+        projectID: data.project.id,
+      })}
       description="Course screens focus on the frontpage and their direct child chapters. Parent context stays in breadcrumbs."
       meta={
         formatDate(data.course.updatedAt) ? [`Updated ${formatDate(data.course.updatedAt)}`] : []
       }
+      sidePanel={<CourseNavigationPanel navigation={navigation} />}
       title={data.course.title}
     >
       <EditorialInfoGrid

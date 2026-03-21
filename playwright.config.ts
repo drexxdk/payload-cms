@@ -34,7 +34,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm dev',
+    command: 'yarn build && yarn start',
     reuseExistingServer: true,
     url: 'http://localhost:3000',
   },
